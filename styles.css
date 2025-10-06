@@ -309,3 +309,14 @@ h1 {
 .participant-button-list button.already-voted:hover {
     background-color: rgba(76, 175, 80, 0.3);
 }
+
+@keyframes barGrow {
+    from {
+        transform: scaleX(0);
+        opacity: 0;
+    }
+    to {
+        transform: scaleX(1);
+        opacity: 0.9;
+    }
+}
