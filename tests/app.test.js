@@ -67,6 +67,7 @@ beforeEach(() => {
     <button id="backButton"></button>
     <h2 id="taskTitle"></h2>
     <div id="currentSessionId"></div>
+    <div id="currentParticipantName"></div>
     <div id="participantsList"></div>
     <div id="resultsSection" class="hidden"></div>
     <div id="resultsGrid"></div>

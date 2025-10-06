@@ -7,6 +7,7 @@ export const elements = {
     get backButton() { return document.getElementById('backButton'); },
     get taskTitle() { return document.getElementById('taskTitle'); },
     get currentSessionId() { return document.getElementById('currentSessionId'); },
+    get currentParticipantName() { return document.getElementById('currentParticipantName'); },
     get participantsList() { return document.getElementById('participantsList'); },
     get resultsSection() { return document.getElementById('resultsSection'); },
     get resultsGrid() { return document.getElementById('resultsGrid'); },
@@ -38,7 +39,8 @@ export function switchToSetupView() {
 
 export function updateSessionUI(sessionData, currentParticipant) {
     elements.taskTitle.textContent = `Task: ${sessionData.taskDescription}`;
-    
+    elements.currentParticipantName.textContent = currentParticipant || 'Viewing Results';
+
     // Update participants list
     updateParticipantsList(sessionData.participants);
     
@@ -81,11 +83,16 @@ function updateParticipantsList(participants) {
 function updateEstimationSection(currentParticipantData) {
     const estimationButtons = elements.yourEstimationSection.querySelector('.estimation-buttons');
     
-    if (currentParticipantData && currentParticipantData.submitted) {
+    if (!currentParticipantData) {
+        // Hide estimation section if no participant selected
+        elements.yourEstimationSection.style.display = 'none';
+    } else if (currentParticipantData.submitted) {
+        elements.yourEstimationSection.style.display = 'block';
         estimationButtons.style.display = 'none';
         elements.yourEstimateDisplay.classList.remove('hidden');
         elements.yourEstimate.textContent = currentParticipantData.estimate;
     } else {
+        elements.yourEstimationSection.style.display = 'block';
         estimationButtons.style.display = 'grid';
         elements.yourEstimateDisplay.classList.add('hidden');
     }
