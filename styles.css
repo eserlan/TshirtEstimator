@@ -1,10 +1,34 @@
 :root {
     --primary: #1976d2;
+    --article-padding: var(--spacing);
+    --article-margin: 1rem;
+    --heading-margin-bottom: 0.75rem;
+    --article-header-margin-bottom: 0.75rem;
+}
+
+dialog>article>header {
+    margin-top: calc(var(--article-margin)*2);
 }
 
 article {
-    margin: 1.5rem 0;
-    /*padding: var(--spacing);*/
+    margin-top: var(--article-margin);
+    margin-bottom: var(--article-margin);
+    padding-top: var(--article-header-margin-bottom) ;
+    padding-bottom: calc(var(--article-header-margin-bottom) / 2);
+}
+
+article header {
+    margin-bottom: var(--article-header-margin-bottom);
+}
+
+
+article>header {
+    padding-top: var(--article-header-margin-bottom) ;
+    padding-bottom: calc(var(--article-header-margin-bottom) / 2);
+}
+
+h2, h3 {
+    margin-bottom: var(--heading-margin-bottom);
 }
 
 .container {
@@ -67,7 +91,7 @@ article {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-    margin: 1rem 0;
+    margin: 0.5rem 0;
 }
 
 .result-card {
@@ -132,4 +156,20 @@ h1 {
     border-left: 4px solid #ff9800;
     border-radius: 0.25rem;
     margin: 1rem 0;
+}
+
+.participant-button-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.participant-button-list button {
+    width: 100%;
+}
+
+.participant-button-list button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

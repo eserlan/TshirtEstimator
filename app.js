@@ -6,6 +6,58 @@ let currentSession = null;
 let currentParticipant = null;
 let unsubscribe = null;
 
+// Modal elements
+const participantModal = document.getElementById('participantModal');
+const participantButtonList = document.getElementById('participantButtonList');
+
+// Show participant selection modal
+function showParticipantModal(participants, sessionId, alreadySelectedParticipants = []) {
+    return new Promise((resolve) => {
+        // Clear previous buttons
+        participantButtonList.innerHTML = '';
+
+        // Create button for each participant
+        participants.forEach(participantName => {
+            const button = document.createElement('button');
+            button.textContent = participantName;
+            button.classList.add('participant-select-btn');
+
+            // Disable if already selected
+            if (alreadySelectedParticipants.includes(participantName)) {
+                button.disabled = true;
+                button.textContent = `${participantName} (already joined)`;
+            }
+
+            button.addEventListener('click', () => {
+                participantModal.close();
+                resolve(participantName);
+            });
+
+            participantButtonList.appendChild(button);
+        });
+
+        // Add "View Results" button that's always enabled
+        const viewResultsButton = document.createElement('button');
+        viewResultsButton.textContent = '👁️ View Results';
+        viewResultsButton.classList.add('secondary', 'outline');
+        viewResultsButton.addEventListener('click', () => {
+            participantModal.close();
+            resolve('__VIEW_RESULTS__');
+        });
+        participantButtonList.appendChild(viewResultsButton);
+
+        // Show the modal
+        participantModal.showModal();
+
+        // Handle modal close without selection
+        participantModal.addEventListener('close', () => {
+            if (!participantModal.returnValue) {
+                resolve(null);
+            }
+        }, { once: true });
+    });
+}
+
 // Proquint encoding for session IDs
 // Converts random bytes to pronounceable identifiers
 function uint16ToProquint(n) {
@@ -85,11 +137,15 @@ async function handleCreateSession(e) {
         await createSession(sessionId, taskDescription, participants);
         
         // Prompt user to select their name
-        const participantName = prompt(`Session created! Select your name:\n${participantNames.join(', ')}`);
-        if (participantName && participants[participantName]) {
+        const participantName = await showParticipantModal(participantNames, sessionId);
+        if (participantName === '__VIEW_RESULTS__') {
+            // View-only mode - load session without participant
+            currentParticipant = null;
+            loadSession(sessionId);
+        } else if (participantName && participants[participantName]) {
             currentParticipant = participantName;
             loadSession(sessionId);
-        } else {
+        } else if (participantName) {
             alert('Invalid participant name. Please join the session with a valid name.');
             elements.currentSessionId.textContent = sessionId;
         }
@@ -116,12 +172,21 @@ async function handleJoinSession(e) {
         const sessionData = sessionDoc.data();
         const participantNames = Object.keys(sessionData.participants);
         
+        // Find participants who have already submitted estimates
+        const participantsWithEstimates = participantNames.filter(
+            name => sessionData.participants[name].estimate !== null
+        );
+
         // Prompt user to select their name
-        const participantName = prompt(`Select your name:\n${participantNames.join(', ')}`);
-        if (participantName && sessionData.participants[participantName]) {
+        const participantName = await showParticipantModal(participantNames, sessionId, participantsWithEstimates);
+        if (participantName === '__VIEW_RESULTS__') {
+            // View-only mode - load session without participant
+            currentParticipant = null;
+            loadSession(sessionId);
+        } else if (participantName && sessionData.participants[participantName]) {
             currentParticipant = participantName;
             loadSession(sessionId);
-        } else {
+        } else if (participantName) {
             alert('Invalid participant name. Please select a valid participant.');
         }
     } catch (error) {
