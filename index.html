@@ -12,43 +12,45 @@
         <h1>👕 T-shirt Estimator</h1>
         
         <!-- Setup View -->
-        <div id="setupView" class="section">
-            <h2>Start a New Session</h2>
-            <form id="createSessionForm">
-                <label for="taskDescription">
-                    Task Description
-                    <input type="text" id="taskDescription" name="taskDescription" placeholder="Enter the task to estimate" required>
-                </label>
-                <label for="participantNames">
-                    Participants (comma-separated)
-                    <input type="text" id="participantNames" name="participantNames" placeholder="Alice, Bob, Charlie" required>
-                </label>
-                <button type="submit">Create Session</button>
-            </form>
-            
-            <hr>
-            
-            <h2>Join Existing Session</h2>
-            <form id="joinSessionForm">
-                <label for="sessionId">
-                    Session ID
-                    <input type="text" id="sessionId" name="sessionId" placeholder="Enter session ID" required>
-                </label>
-                <button type="submit">Join Session</button>
-            </form>
-        </div>
-        
+        <section id="setupView" class="section">
+            <article>
+                <h2>Start a New Session</h2>
+                <form id="createSessionForm">
+                    <label for="taskDescription">
+                        Task Description
+                        <input type="text" id="taskDescription" name="taskDescription" placeholder="Enter the task to estimate" required>
+                    </label>
+                    <label for="participantNames">
+                        Participants (comma-separated)
+                        <input type="text" id="participantNames" name="participantNames" placeholder="Alice, Bob, Charlie" required>
+                    </label>
+                    <button type="submit">Create Session</button>
+                </form>
+            </article>
+
+            <article>
+                <h2>Join Existing Session</h2>
+                <form id="joinSessionForm">
+                    <label for="sessionId">
+                        Session ID
+                        <input type="text" id="sessionId" name="sessionId" placeholder="Enter session ID" required>
+                    </label>
+                    <button type="submit">Join Session</button>
+                </form>
+            </article>
+        </section>
+
         <!-- Estimation View -->
-        <div id="estimationView" class="section hidden">
+        <section id="estimationView" class="section hidden">
             <button id="backButton" class="secondary outline">← Back to Setup</button>
             
             <h2 id="taskTitle">Task: Loading...</h2>
             
-            <div class="session-id-display">
+            <p class="session-id-display">
                 Session ID: <strong id="currentSessionId"></strong>
-            </div>
-            
-            <div id="yourEstimationSection">
+            </p>
+
+            <article id="yourEstimationSection">
                 <h3>Your Estimation</h3>
                 <p>Select your T-shirt size estimate:</p>
                 <div class="estimation-buttons">
@@ -59,47 +61,37 @@
                     <button class="estimate-btn" data-size="XL">XL</button>
                     <button class="estimate-btn" data-size="XXL">XXL</button>
                 </div>
-                <div id="yourEstimateDisplay" class="hidden">
+                <footer id="yourEstimateDisplay" class="hidden">
                     <p>You estimated: <strong id="yourEstimate"></strong></p>
+                </footer>
+            </article>
+
+            <section>
+                <h3>Participants Status</h3>
+                <div id="participantsList" class="participant-list">
+                    <!-- Participants will be dynamically added here -->
                 </div>
-            </div>
-            
-            <h3>Participants Status</h3>
-            <div id="participantsList" class="participant-list">
-                <!-- Participants will be dynamically added here -->
-            </div>
-            
-            <div id="resultsSection" class="hidden">
-                <h3>📊 Results</h3>
-                <div class="info-message">
+            </section>
+
+            <article id="resultsSection" class="hidden">
+                <header>
+                    <h3>📊 Results</h3>
+                </header>
+                <p class="info-message">
                     All participants have submitted their estimates!
-                </div>
+                </p>
                 <div id="resultsGrid" class="results-grid">
                     <!-- Results will be dynamically added here -->
                 </div>
-            </div>
-            
-            <div id="waitingSection" class="hidden">
-                <div class="warning-message">
+            </article>
+
+            <aside id="waitingSection" class="hidden">
+                <p class="warning-message">
                     ⏳ Waiting for all participants to submit their estimates...
-                </div>
-            </div>
-        </div>
-        
-        <!-- Firebase Config Section -->
-        <div id="firebaseConfigView" class="section">
-            <details>
-                <summary>Firebase Configuration</summary>
-                <p>To use this application, you need to configure Firebase:</p>
-                <ol>
-                    <li>Create a Firebase project at <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
-                    <li>Enable Firestore Database</li>
-                    <li>Get your Firebase configuration</li>
-                    <li>Update the firebaseConfig object in <code>firebase-config.js</code></li>
-                </ol>
-                <p><strong>Note:</strong> For demo purposes, you can use the default configuration, but it's recommended to use your own Firebase project.</p>
-            </details>
-        </div>
+                </p>
+            </aside>
+        </section>
+
     </main>
     
     <script type="module" src="app.js"></script>

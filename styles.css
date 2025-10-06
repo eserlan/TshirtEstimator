@@ -2,6 +2,11 @@
     --primary: #1976d2;
 }
 
+article {
+    margin: 1.5rem 0;
+    /*padding: var(--spacing);*/
+}
+
 .container {
     max-width: 800px;
     margin: 0 auto;
