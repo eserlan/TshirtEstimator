@@ -37,6 +37,18 @@ h2, h3 {
     padding: 2rem;
 }
 
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0.5rem;
+    }
+}
+
 .estimation-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
