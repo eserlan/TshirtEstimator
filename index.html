@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-shirt Estimator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        :root {
+            --primary: #1976d2;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .estimation-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .estimation-buttons button {
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .participant-list {
+            margin: 1rem 0;
+        }
+        
+        .participant-item {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background-color: var(--card-background-color);
+            border-radius: 0.25rem;
+            border: 1px solid var(--card-border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .participant-item.submitted {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-color: #4caf50;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .status-submitted {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .status-pending {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .result-card {
+            padding: 1rem;
+            background-color: var(--card-background-color);
+            border-radius: 0.25rem;
+            border: 2px solid var(--card-border-color);
+            text-align: center;
+        }
+        
+        .result-estimate {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+        
+        .section {
+            margin: 2rem 0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .session-id-display {
+            background-color: var(--code-background-color);
+            padding: 1rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .action-buttons button {
+            flex: 1;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .info-message {
+            padding: 1rem;
+            background-color: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid #2196f3;
+            border-radius: 0.25rem;
+            margin: 1rem 0;
+        }
+        
+        .warning-message {
+            padding: 1rem;
+            background-color: rgba(255, 152, 0, 0.1);
+            border-left: 4px solid #ff9800;
+            border-radius: 0.25rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1>👕 T-shirt Estimator</h1>
+        
+        <!-- Setup View -->
+        <div id="setupView" class="section">
+            <h2>Start a New Session</h2>
+            <form id="createSessionForm">
+                <label for="taskDescription">
+                    Task Description
+                    <input type="text" id="taskDescription" name="taskDescription" placeholder="Enter the task to estimate" required>
+                </label>
+                <label for="participantNames">
+                    Participants (comma-separated)
+                    <input type="text" id="participantNames" name="participantNames" placeholder="Alice, Bob, Charlie" required>
+                </label>
+                <button type="submit">Create Session</button>
+            </form>
+            
+            <hr>
+            
+            <h2>Join Existing Session</h2>
+            <form id="joinSessionForm">
+                <label for="sessionId">
+                    Session ID
+                    <input type="text" id="sessionId" name="sessionId" placeholder="Enter session ID" required>
+                </label>
+                <button type="submit">Join Session</button>
+            </form>
+        </div>
+        
+        <!-- Estimation View -->
+        <div id="estimationView" class="section hidden">
+            <button id="backButton" class="secondary outline">← Back to Setup</button>
+            
+            <h2 id="taskTitle">Task: Loading...</h2>
+            
+            <div class="session-id-display">
+                Session ID: <strong id="currentSessionId"></strong>
+            </div>
+            
+            <div id="yourEstimationSection">
+                <h3>Your Estimation</h3>
+                <p>Select your T-shirt size estimate:</p>
+                <div class="estimation-buttons">
+                    <button class="estimate-btn" data-size="XS">XS</button>
+                    <button class="estimate-btn" data-size="S">S</button>
+                    <button class="estimate-btn" data-size="M">M</button>
+                    <button class="estimate-btn" data-size="L">L</button>
+                    <button class="estimate-btn" data-size="XL">XL</button>
+                    <button class="estimate-btn" data-size="XXL">XXL</button>
+                </div>
+                <div id="yourEstimateDisplay" class="hidden">
+                    <p>You estimated: <strong id="yourEstimate"></strong></p>
+                </div>
+            </div>
+            
+            <h3>Participants Status</h3>
+            <div id="participantsList" class="participant-list">
+                <!-- Participants will be dynamically added here -->
+            </div>
+            
+            <div id="resultsSection" class="hidden">
+                <h3>📊 Results</h3>
+                <div class="info-message">
+                    All participants have submitted their estimates!
+                </div>
+                <div id="resultsGrid" class="results-grid">
+                    <!-- Results will be dynamically added here -->
+                </div>
+            </div>
+            
+            <div id="waitingSection" class="hidden">
+                <div class="warning-message">
+                    ⏳ Waiting for all participants to submit their estimates...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Firebase Config Section -->
+        <div id="firebaseConfigView" class="section">
+            <details>
+                <summary>Firebase Configuration</summary>
+                <p>To use this application, you need to configure Firebase:</p>
+                <ol>
+                    <li>Create a Firebase project at <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
+                    <li>Enable Firestore Database</li>
+                    <li>Get your Firebase configuration</li>
+                    <li>Update the firebaseConfig object in the JavaScript code below</li>
+                </ol>
+                <p><strong>Note:</strong> For demo purposes, you can use the default configuration, but it's recommended to use your own Firebase project.</p>
+            </details>
+        </div>
+    </main>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Firebase configuration
+        // Replace this with your own Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDemoKeyForTshirtEstimator123456789",
+            authDomain: "tshirt-estimator-demo.firebaseapp.com",
+            projectId: "tshirt-estimator-demo",
+            storageBucket: "tshirt-estimator-demo.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456"
+        };
+        
+        // Initialize Firebase
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Error initializing Firebase:', error);
+            alert('Failed to initialize Firebase. Please check your configuration.');
+        }
+        
+        // Global state
+        let currentSession = null;
+        let currentParticipant = null;
+        let unsubscribe = null;
+        
+        // DOM elements
+        const setupView = document.getElementById('setupView');
+        const estimationView = document.getElementById('estimationView');
+        const createSessionForm = document.getElementById('createSessionForm');
+        const joinSessionForm = document.getElementById('joinSessionForm');
+        const backButton = document.getElementById('backButton');
+        const taskTitle = document.getElementById('taskTitle');
+        const currentSessionId = document.getElementById('currentSessionId');
+        const participantsList = document.getElementById('participantsList');
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const waitingSection = document.getElementById('waitingSection');
+        const yourEstimationSection = document.getElementById('yourEstimationSection');
+        const yourEstimateDisplay = document.getElementById('yourEstimateDisplay');
+        const yourEstimate = document.getElementById('yourEstimate');
+        
+        // Generate random session ID
+        function generateSessionId() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+        
+        // Create new session
+        createSessionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const taskDescription = document.getElementById('taskDescription').value.trim();
+            const participantNames = document.getElementById('participantNames').value
+                .split(',')
+                .map(name => name.trim())
+                .filter(name => name.length > 0);
+            
+            if (participantNames.length === 0) {
+                alert('Please enter at least one participant name');
+                return;
+            }
+            
+            const sessionId = generateSessionId();
+            
+            // Create participants object
+            const participants = {};
+            participantNames.forEach(name => {
+                participants[name] = {
+                    name: name,
+                    estimate: null,
+                    submitted: false
+                };
+            });
+            
+            try {
+                await setDoc(doc(db, 'sessions', sessionId), {
+                    taskDescription: taskDescription,
+                    participants: participants,
+                    createdAt: serverTimestamp(),
+                    allSubmitted: false
+                });
+                
+                // Prompt user to select their name
+                const participantName = prompt(`Session created! Select your name:\n${participantNames.join(', ')}`);
+                if (participantName && participants[participantName]) {
+                    currentParticipant = participantName;
+                    loadSession(sessionId);
+                } else {
+                    alert('Invalid participant name. Please join the session with a valid name.');
+                    currentSessionId.textContent = sessionId;
+                }
+            } catch (error) {
+                console.error('Error creating session:', error);
+                alert('Failed to create session. Please try again.');
+            }
+        });
+        
+        // Join existing session
+        joinSessionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const sessionId = document.getElementById('sessionId').value.trim().toUpperCase();
+            
+            try {
+                const sessionDoc = await getDoc(doc(db, 'sessions', sessionId));
+                
+                if (!sessionDoc.exists()) {
+                    alert('Session not found. Please check the session ID.');
+                    return;
+                }
+                
+                const sessionData = sessionDoc.data();
+                const participantNames = Object.keys(sessionData.participants);
+                
+                // Prompt user to select their name
+                const participantName = prompt(`Select your name:\n${participantNames.join(', ')}`);
+                if (participantName && sessionData.participants[participantName]) {
+                    currentParticipant = participantName;
+                    loadSession(sessionId);
+                } else {
+                    alert('Invalid participant name. Please select a valid participant.');
+                }
+            } catch (error) {
+                console.error('Error joining session:', error);
+                alert('Failed to join session. Please try again.');
+            }
+        });
+        
+        // Load session and set up real-time listener
+        function loadSession(sessionId) {
+            currentSession = sessionId;
+            currentSessionId.textContent = sessionId;
+            
+            // Switch views
+            setupView.classList.add('hidden');
+            estimationView.classList.remove('hidden');
+            
+            // Set up real-time listener
+            if (unsubscribe) {
+                unsubscribe();
+            }
+            
+            unsubscribe = onSnapshot(doc(db, 'sessions', sessionId), (doc) => {
+                if (doc.exists()) {
+                    updateUI(doc.data());
+                } else {
+                    alert('Session no longer exists');
+                    goBackToSetup();
+                }
+            }, (error) => {
+                console.error('Error listening to session:', error);
+                alert('Error loading session data');
+            });
+        }
+        
+        // Update UI with session data
+        function updateUI(sessionData) {
+            taskTitle.textContent = `Task: ${sessionData.taskDescription}`;
+            
+            // Update participants list
+            participantsList.innerHTML = '';
+            const participants = sessionData.participants;
+            
+            Object.values(participants).forEach(participant => {
+                const item = document.createElement('div');
+                item.className = `participant-item ${participant.submitted ? 'submitted' : ''}`;
+                
+                const name = document.createElement('span');
+                name.textContent = participant.name;
+                
+                const status = document.createElement('span');
+                status.className = `status-badge ${participant.submitted ? 'status-submitted' : 'status-pending'}`;
+                status.textContent = participant.submitted ? '✓ Submitted' : '⏳ Pending';
+                
+                item.appendChild(name);
+                item.appendChild(status);
+                participantsList.appendChild(item);
+            });
+            
+            // Check if current participant has submitted
+            const currentParticipantData = participants[currentParticipant];
+            if (currentParticipantData && currentParticipantData.submitted) {
+                yourEstimationSection.querySelector('.estimation-buttons').style.display = 'none';
+                yourEstimateDisplay.classList.remove('hidden');
+                yourEstimate.textContent = currentParticipantData.estimate;
+            } else {
+                yourEstimationSection.querySelector('.estimation-buttons').style.display = 'grid';
+                yourEstimateDisplay.classList.add('hidden');
+            }
+            
+            // Check if all submitted
+            const allSubmitted = Object.values(participants).every(p => p.submitted);
+            
+            if (allSubmitted) {
+                resultsSection.classList.remove('hidden');
+                waitingSection.classList.add('hidden');
+                
+                // Display results
+                resultsGrid.innerHTML = '';
+                Object.values(participants).forEach(participant => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card';
+                    
+                    const name = document.createElement('div');
+                    name.textContent = participant.name;
+                    
+                    const estimate = document.createElement('div');
+                    estimate.className = 'result-estimate';
+                    estimate.textContent = participant.estimate;
+                    
+                    card.appendChild(name);
+                    card.appendChild(estimate);
+                    resultsGrid.appendChild(card);
+                });
+            } else if (currentParticipantData && currentParticipantData.submitted) {
+                resultsSection.classList.add('hidden');
+                waitingSection.classList.remove('hidden');
+            } else {
+                resultsSection.classList.add('hidden');
+                waitingSection.classList.add('hidden');
+            }
+        }
+        
+        // Handle estimate submission
+        document.querySelectorAll('.estimate-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const size = button.getAttribute('data-size');
+                
+                if (!currentSession || !currentParticipant) {
+                    alert('Error: Session or participant not set');
+                    return;
+                }
+                
+                try {
+                    const sessionRef = doc(db, 'sessions', currentSession);
+                    const sessionDoc = await getDoc(sessionRef);
+                    
+                    if (sessionDoc.exists()) {
+                        const sessionData = sessionDoc.data();
+                        const participants = sessionData.participants;
+                        
+                        // Update participant's estimate
+                        participants[currentParticipant].estimate = size;
+                        participants[currentParticipant].submitted = true;
+                        
+                        // Check if all submitted
+                        const allSubmitted = Object.values(participants).every(p => p.submitted);
+                        
+                        await updateDoc(sessionRef, {
+                            participants: participants,
+                            allSubmitted: allSubmitted
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error submitting estimate:', error);
+                    alert('Failed to submit estimate. Please try again.');
+                }
+            });
+        });
+        
+        // Back button
+        backButton.addEventListener('click', () => {
+            goBackToSetup();
+        });
+        
+        function goBackToSetup() {
+            if (unsubscribe) {
+                unsubscribe();
+                unsubscribe = null;
+            }
+            
+            currentSession = null;
+            currentParticipant = null;
+            
+            setupView.classList.remove('hidden');
+            estimationView.classList.add('hidden');
+            
+            // Reset forms
+            createSessionForm.reset();
+            joinSessionForm.reset();
+        }
+    </script>
+</body>
+</html>
