@@ -17,12 +17,12 @@ let html = readFileSync(indexPath, 'utf-8');
 
 // Add version query parameter to CSS and JS files in HTML
 html = html.replace(
-  /href="([^"]+\.css)"/g,
+  /href="(?!https?:)([^"]+\.css)"/g,
   `href="$1?v=${version}"`
 );
 
 html = html.replace(
-  /src="([^"]+\.js)"/g,
+  /src="(?!https?:)([^"]+\.js)"/g,
   `src="$1?v=${version}"`
 );
 
