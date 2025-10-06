@@ -1,13 +1,15 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js';
+import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js';
 import { firebaseConfig } from './firebase-config.js';
 
 // Initialize Firebase
-let app, db;
+let app, db, analytics;
 
 try {
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
+    analytics = getAnalytics(app);
     console.log('Firebase initialized successfully');
 } catch (error) {
     console.error('Error initializing Firebase:', error);
