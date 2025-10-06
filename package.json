@@ -1,0 +1,22 @@
+{
+  "name": "tshirtestimator",
+  "version": "1.0.0",
+  "description": "A real-time web application for collaborative T-shirt size estimation. Multiple participants can provide estimates for a task, with results revealed only when everyone has submitted.",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@vitest/ui": "^3.2.4",
+    "happy-dom": "^19.0.2",
+    "jsdom": "^27.0.0",
+    "vitest": "^3.2.4"
+  }
+}

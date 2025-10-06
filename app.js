@@ -7,7 +7,7 @@ let currentParticipant = null;
 let unsubscribe = null;
 
 // Generate random session ID
-function generateSessionId() {
+export function generateSessionId() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
