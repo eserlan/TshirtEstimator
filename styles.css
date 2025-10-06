@@ -1,0 +1,130 @@
+:root {
+    --primary: #1976d2;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.estimation-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.estimation-buttons button {
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.participant-list {
+    margin: 1rem 0;
+}
+
+.participant-item {
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    background-color: var(--card-background-color);
+    border-radius: 0.25rem;
+    border: 1px solid var(--card-border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.participant-item.submitted {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-color: #4caf50;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-submitted {
+    background-color: #4caf50;
+    color: white;
+}
+
+.status-pending {
+    background-color: #ff9800;
+    color: white;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.result-card {
+    padding: 1rem;
+    background-color: var(--card-background-color);
+    border-radius: 0.25rem;
+    border: 2px solid var(--card-border-color);
+    text-align: center;
+}
+
+.result-estimate {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin: 0.5rem 0;
+}
+
+.section {
+    margin: 2rem 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.session-id-display {
+    background-color: var(--code-background-color);
+    padding: 1rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 1.1rem;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.action-buttons button {
+    flex: 1;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.info-message {
+    padding: 1rem;
+    background-color: rgba(33, 150, 243, 0.1);
+    border-left: 4px solid #2196f3;
+    border-radius: 0.25rem;
+    margin: 1rem 0;
+}
+
+.warning-message {
+    padding: 1rem;
+    background-color: rgba(255, 152, 0, 0.1);
+    border-left: 4px solid #ff9800;
+    border-radius: 0.25rem;
+    margin: 1rem 0;
+}
