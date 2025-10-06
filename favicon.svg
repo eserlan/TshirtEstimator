@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- T-shirt shape -->
+  <defs>
+    <linearGradient id="tshirtGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1976d2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1565c0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left Sleeve -->
+  <path d="M 15 20 L 5 30 L 8 50 L 20 48 L 25 25 Z"
+        fill="url(#tshirtGradient)"
+        stroke="#0d47a1"
+        stroke-width="1.5"/>
+
+  <!-- Right Sleeve -->
+  <path d="M 85 20 L 95 30 L 92 50 L 80 48 L 75 25 Z"
+        fill="url(#tshirtGradient)"
+        stroke="#0d47a1"
+        stroke-width="1.5"/>
+
+  <!-- Main T-shirt body -->
+  <path d="M 25 25 L 25 95 L 75 95 L 75 25 L 70 25 L 65 32 Q 60 38 50 38 Q 40 38 35 32 L 30 25 Z"
+        fill="url(#tshirtGradient)"
+        stroke="#0d47a1"
+        stroke-width="2"/>
+
+  <!-- V-neck collar detail -->
+  <path d="M 35 25 L 40 32 L 50 35 L 60 32 L 65 25"
+        fill="none"
+        stroke="#0d47a1"
+        stroke-width="1.5"/>
+
+</svg>
+
