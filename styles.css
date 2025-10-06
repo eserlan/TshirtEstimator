@@ -150,12 +150,37 @@ h1 {
     margin: 1rem 0;
 }
 
-.warning-message {
-    padding: 1rem;
-    background-color: rgba(255, 152, 0, 0.1);
-    border-left: 4px solid #ff9800;
-    border-radius: 0.25rem;
-    margin: 1rem 0;
+.welcome-banner {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(33, 150, 243, 0.15) 100%);
+    border: 2px solid #4caf50;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align: center;
+    animation: slideIn 0.3s ease-out;
+}
+
+.welcome-banner h3 {
+    color: #4caf50;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.welcome-banner p {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .participant-button-list {

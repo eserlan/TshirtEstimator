@@ -13,6 +13,8 @@ describe('UI Module Tests', () => {
       <h2 id="taskTitle"></h2>
       <div id="currentSessionId"></div>
       <div id="currentParticipantName"></div>
+      <div id="welcomeBanner" class="hidden"></div>
+      <span id="welcomeParticipantName"></span>
       <div id="participantsList"></div>
       <div id="resultsSection" class="hidden"></div>
       <div id="resultsGrid"></div>
@@ -36,6 +38,8 @@ describe('UI Module Tests', () => {
       expect(elements.taskTitle).toBeDefined();
       expect(elements.currentSessionId).toBeDefined();
       expect(elements.currentParticipantName).toBeDefined();
+      expect(elements.welcomeBanner).toBeDefined();
+      expect(elements.welcomeParticipantName).toBeDefined();
       expect(elements.participantsList).toBeDefined();
       expect(elements.resultsSection).toBeDefined();
       expect(elements.resultsGrid).toBeDefined();

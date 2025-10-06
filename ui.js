@@ -14,7 +14,9 @@ export const elements = {
     get waitingSection() { return document.getElementById('waitingSection'); },
     get yourEstimationSection() { return document.getElementById('yourEstimationSection'); },
     get yourEstimateDisplay() { return document.getElementById('yourEstimateDisplay'); },
-    get yourEstimate() { return document.getElementById('yourEstimate'); }
+    get yourEstimate() { return document.getElementById('yourEstimate'); },
+    get welcomeBanner() { return document.getElementById('welcomeBanner'); },
+    get welcomeParticipantName() { return document.getElementById('welcomeParticipantName'); }
 };
 
 // UI update functions
@@ -57,6 +59,20 @@ export function updateSessionUI(sessionData, currentParticipant) {
         showWaitingMessage();
     } else {
         hideResultsAndWaiting();
+    }
+
+    // Show or hide welcome banner for named participants
+    if (currentParticipant && currentParticipantData && !currentParticipantData.submitted) {
+        if (elements.welcomeParticipantName) {
+            elements.welcomeParticipantName.textContent = currentParticipant;
+        }
+        if (elements.welcomeBanner) {
+            elements.welcomeBanner.classList.remove('hidden');
+        }
+    } else {
+        if (elements.welcomeBanner) {
+            elements.welcomeBanner.classList.add('hidden');
+        }
     }
 }
 
