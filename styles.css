@@ -6,22 +6,6 @@
     --article-header-margin-bottom: 0.75rem;
 }
 
-dialog>article>header {
-    margin-top: calc(var(--article-margin)*2);
-}
-
-article {
-    margin-top: var(--article-margin);
-    margin-bottom: var(--article-margin);
-    padding-top: var(--article-header-margin-bottom) ;
-    padding-bottom: calc(var(--article-header-margin-bottom) / 2);
-}
-
-article header {
-    margin-bottom: var(--article-header-margin-bottom);
-}
-
-
 article>header {
     padding-top: var(--article-header-margin-bottom) ;
     padding-bottom: calc(var(--article-header-margin-bottom) / 2);
@@ -148,10 +132,6 @@ h2, h3 {
     font-weight: bold;
     color: var(--primary);
     margin: 0.5rem 0;
-}
-
-.section {
-    margin: 2rem 0;
 }
 
 .hidden {

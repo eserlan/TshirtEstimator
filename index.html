@@ -9,124 +9,138 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <main class="container">
-        <h1>👕 T-shirt Estimator</h1>
-        
-        <!-- Setup View -->
-        <section id="setupView" class="section">
-            <article>
-                <h2>Start a New Session</h2>
-                <form id="createSessionForm">
-                    <label for="taskDescription">
-                        Task Description
-                        <input type="text" id="taskDescription" name="taskDescription" placeholder="Enter the task to estimate" required>
-                    </label>
-                    <label for="participantNames">
-                        Participants (comma-separated)
-                        <input type="text" id="participantNames" name="participantNames" placeholder="Alice, Bob, Charlie" required>
-                    </label>
-                    <button type="submit">Create Session</button>
-                </form>
-            </article>
+<main class="container">
+    <h1>👕 T-shirt Estimator</h1>
 
-            <article>
-                <h2>Join Existing Session</h2>
-                <form id="joinSessionForm">
-                    <label for="sessionId">
-                        Session ID
-                        <input type="text" id="sessionId" name="sessionId" placeholder="Enter session ID" required>
-                    </label>
-                    <button type="submit">Join Session</button>
-                </form>
-            </article>
-        </section>
+    <!-- Setup View -->
+    <section id="setupView">
+        <article>
+            <h2>Start a New Session</h2>
+            <form id="createSessionForm">
+                <label for="taskDescription">
+                    Task Description
+                    <input type="text" id="taskDescription" name="taskDescription"
+                           placeholder="Enter the task to estimate" required>
+                </label>
+                <label for="participantNames">
+                    Participants (comma-separated)
+                    <input type="text" id="participantNames" name="participantNames" placeholder="Alice, Bob, Charlie"
+                           required>
+                </label>
+                <button type="submit">Create Session</button>
+            </form>
+        </article>
 
-        <!-- Estimation View -->
-        <section id="estimationView" class="section hidden">
-            <button id="backButton" class="secondary outline">← Back to Setup</button>
-            
-            <h2 id="taskTitle">Task: Loading...</h2>
-            
+        <article>
+            <h2>Join Existing Session</h2>
+            <form id="joinSessionForm">
+                <label for="sessionId">
+                    Session ID
+                    <input type="text" id="sessionId" name="sessionId" placeholder="Enter session ID" required>
+                </label>
+                <button type="submit">Join Session</button>
+            </form>
+        </article>
+    </section>
+
+    <!-- Estimation View -->
+    <section id="estimationView" class="hidden">
+        <button id="backButton" class="secondary outline">← Back to Setup</button>
+
+        <article>
+            <header>
+                <h2 id="taskTitle">Task: Loading...</h2>
+            </header>
             <p class="session-id-display">
                 Session ID: <strong id="currentSessionId"></strong>
             </p>
-
             <p class="participant-name-display">
                 Participant: <strong id="currentParticipantName"></strong>
             </p>
+        </article>
 
-            <article id="welcomeBanner" class="welcome-banner hidden">
+        <article id="welcomeBanner" class="welcome-banner hidden">
+            <header>
                 <h3>👋 Welcome, <span id="welcomeParticipantName"></span>!</h3>
-                <p>Ready to estimate? Select your T-shirt size below.</p>
-            </article>
+            </header>
+            <p>Ready to estimate? Select your T-shirt size below.</p>
+        </article>
 
-            <article id="yourEstimationSection">
+        <article id="yourEstimationSection">
+            <header>
                 <h3>Your Estimation</h3>
+            </header>
+            <div class="estimation-buttons">
                 <p>Select your T-shirt size estimate:</p>
-                <div class="estimation-buttons">
-                    <button class="estimate-btn" data-size="XS">XS</button>
-                    <button class="estimate-btn" data-size="S">S</button>
-                    <button class="estimate-btn" data-size="M">M</button>
-                    <button class="estimate-btn" data-size="L">L</button>
-                    <button class="estimate-btn" data-size="XL">XL</button>
-                    <button class="estimate-btn" data-size="XXL">XXL</button>
-                </div>
-                <footer id="yourEstimateDisplay" class="hidden">
-                    <p>You estimated: <strong id="yourEstimate"></strong></p>
-                </footer>
-            </article>
+                <button class="estimate-btn" data-size="XS">XS</button>
+                <button class="estimate-btn" data-size="S">S</button>
+                <button class="estimate-btn" data-size="M">M</button>
+                <button class="estimate-btn" data-size="L">L</button>
+                <button class="estimate-btn" data-size="XL">XL</button>
+                <button class="estimate-btn" data-size="XXL">XXL</button>
+            </div>
+            <footer id="yourEstimateDisplay" class="hidden">
+                <p>You estimated: <strong id="yourEstimate"></strong></p>
+            </footer>
+        </article>
 
-            <section>
-                <h3>Participants Status</h3>
-                <div id="participantsList" class="participant-list">
-                    <!-- Participants will be dynamically added here -->
-                </div>
-            </section>
 
-            <article id="resultsSection" class="hidden">
-                <header>
-                    <h3>📊 Results</h3>
-                </header>
-                <p class="info-message">
-                    All participants have submitted their estimates!
-                </p>
-
-                <!-- Average Size Visualization -->
-                <div id="averageSizeSection" class="average-size-section">
-                    <h4>Average Estimate: <span id="averageSize"></span></h4>
-                    <svg id="sizesVisualization" class="sizes-svg" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Size distribution bars will be dynamically added here -->
-                    </svg>
-                    <div id="sizeLegend" class="size-legend"></div>
-                </div>
-
-                <footer>
-                    <button id="joinSessionButton" class="secondary">➕ Join Session</button>
-                </footer>
-            </article>
-
-            <aside id="waitingSection" class="hidden">
-                <p class="warning-message">
-                    ⏳ Waiting for all participants to submit their estimates...
-                </p>
-            </aside>
-        </section>
-
-    </main>
-    
-    <!-- Participant Selection Modal -->
-    <dialog id="participantModal">
         <article>
             <header>
-                <h3>Select Your Name</h3>
+                <h3>Participants Status</h3>
             </header>
-            <p>Choose your participant name from the list below:</p>
-            <div id="participantButtonList" class="participant-button-list">
-                <!-- Participant buttons will be dynamically added here -->
+            <div id="participantsList" class="participant-list">
+                <!-- Participants will be dynamically added here -->
             </div>
         </article>
-    </dialog>
 
-    <script type="module" src="app.js"></script>
+
+    </section>
+
+    <section>
+        <article id="resultsSection" class="hidden">
+            <header>
+                <h3>📊 Results</h3>
+            </header>
+            <p class="info-message">
+                All participants have submitted their estimates!
+            </p>
+
+            <!-- Average Size Visualization -->
+            <div id="averageSizeSection" class="average-size-section">
+                <h4>Average Estimate: <span id="averageSize"></span></h4>
+                <svg id="sizesVisualization" class="sizes-svg" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Size distribution bars will be dynamically added here -->
+                </svg>
+                <div id="sizeLegend" class="size-legend"></div>
+            </div>
+
+            <footer>
+                <button id="joinSessionButton" class="secondary">➕ Join Session</button>
+            </footer>
+        </article>
+
+        <aside id="waitingSection" class="hidden">
+            <p class="warning-message">
+                ⏳ Waiting for all participants to submit their estimates...
+            </p>
+        </aside>
+    </section>
+</main>
+
+<!-- Participant Selection Modal -->
+<dialog id="participantModal">
+    <article>
+        <header>
+            <h3>Select Your Name</h3>
+        </header>
+        <p>Choose your participant name from the list below:</p>
+        <div id="participantButtonList" class="participant-button-list">
+            <!-- Participant buttons will be dynamically added here -->
+        </div>
+    </article>
+</dialog>
+
+<script type="module" src="app.js"></script>
 </body>
 </html>
