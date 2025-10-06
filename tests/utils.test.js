@@ -2,9 +2,25 @@ import { describe, it, expect } from 'vitest';
 
 describe('Utility Functions', () => {
   describe('generateSessionId', () => {
-    // Test the logic directly
+    // Test the logic directly with proquint encoding
+    function uint16ToProquint(n) {
+      const consonants = 'bdfghjklmnprstvz';
+      const vowels = 'aiou';
+      
+      let result = '';
+      result += consonants[(n >> 12) & 0x0f];
+      result += vowels[(n >> 10) & 0x03];
+      result += consonants[(n >> 6) & 0x0f];
+      result += vowels[(n >> 4) & 0x03];
+      result += consonants[n & 0x0f];
+      
+      return result;
+    }
+
     const generateSessionId = () => {
-      return Math.random().toString(36).substring(2, 8).toUpperCase();
+      const n1 = Math.floor(Math.random() * 65536);
+      const n2 = Math.floor(Math.random() * 65536);
+      return uint16ToProquint(n1) + '-' + uint16ToProquint(n2);
     };
 
     it('should generate a session ID', () => {
@@ -13,15 +29,16 @@ describe('Utility Functions', () => {
       expect(typeof sessionId).toBe('string');
     });
 
-    it('should generate session IDs with correct length', () => {
+    it('should generate session IDs with correct proquint format', () => {
       const sessionId = generateSessionId();
-      expect(sessionId.length).toBeGreaterThanOrEqual(1);
-      expect(sessionId.length).toBeLessThanOrEqual(6);
+      // Proquint format: 5 chars, dash, 5 chars (e.g., "lusab-babad")
+      expect(sessionId.length).toBe(11);
+      expect(sessionId).toMatch(/^[bdfghjklmnprstvzaiou]{5}-[bdfghjklmnprstvzaiou]{5}$/);
     });
 
-    it('should generate uppercase session IDs', () => {
+    it('should generate lowercase session IDs', () => {
       const sessionId = generateSessionId();
-      expect(sessionId).toBe(sessionId.toUpperCase());
+      expect(sessionId).toBe(sessionId.toLowerCase());
     });
 
     it('should generate different session IDs on successive calls', () => {
@@ -30,12 +47,13 @@ describe('Utility Functions', () => {
         ids.add(generateSessionId());
       }
       // Should have high uniqueness
-      expect(ids.size).toBeGreaterThan(50);
+      expect(ids.size).toBeGreaterThan(90);
     });
 
-    it('should only contain alphanumeric characters', () => {
+    it('should only contain valid proquint characters', () => {
       const sessionId = generateSessionId();
-      expect(sessionId).toMatch(/^[A-Z0-9]+$/);
+      // Valid proquint characters: consonants (bdfghjklmnprstvz), vowels (aiou), and dash
+      expect(sessionId).toMatch(/^[bdfghjklmnprstvzaiou-]+$/);
     });
   });
 

@@ -6,9 +6,30 @@ let currentSession = null;
 let currentParticipant = null;
 let unsubscribe = null;
 
-// Generate random session ID
+// Proquint encoding for session IDs
+// Converts random bytes to pronounceable identifiers
+function uint16ToProquint(n) {
+    const consonants = 'bdfghjklmnprstvz';
+    const vowels = 'aiou';
+    
+    let result = '';
+    result += consonants[(n >> 12) & 0x0f];
+    result += vowels[(n >> 10) & 0x03];
+    result += consonants[(n >> 6) & 0x0f];
+    result += vowels[(n >> 4) & 0x03];
+    result += consonants[n & 0x0f];
+    
+    return result;
+}
+
+// Generate random session ID using proquint encoding
 export function generateSessionId() {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
+    // Generate two 16-bit random numbers
+    const n1 = Math.floor(Math.random() * 65536);
+    const n2 = Math.floor(Math.random() * 65536);
+    
+    // Convert to proquint format: lusab-babad
+    return uint16ToProquint(n1) + '-' + uint16ToProquint(n2);
 }
 
 // Initialize the application
@@ -82,7 +103,7 @@ async function handleCreateSession(e) {
 async function handleJoinSession(e) {
     e.preventDefault();
     
-    const sessionId = document.getElementById('sessionId').value.trim().toUpperCase();
+    const sessionId = document.getElementById('sessionId').value.trim().toLowerCase();
     
     try {
         const sessionDoc = await getSession(sessionId);

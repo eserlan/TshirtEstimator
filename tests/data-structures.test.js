@@ -117,23 +117,40 @@ describe('Data Structure Tests', () => {
   });
 
   describe('Session ID Generation', () => {
-    it('should generate valid session ID format', () => {
+    function uint16ToProquint(n) {
+      const consonants = 'bdfghjklmnprstvz';
+      const vowels = 'aiou';
+      
+      let result = '';
+      result += consonants[(n >> 12) & 0x0f];
+      result += vowels[(n >> 10) & 0x03];
+      result += consonants[(n >> 6) & 0x0f];
+      result += vowels[(n >> 4) & 0x03];
+      result += consonants[n & 0x0f];
+      
+      return result;
+    }
+
+    it('should generate valid proquint session ID format', () => {
       const generateSessionId = () => {
-        return Math.random().toString(36).substring(2, 8).toUpperCase();
+        const n1 = Math.floor(Math.random() * 65536);
+        const n2 = Math.floor(Math.random() * 65536);
+        return uint16ToProquint(n1) + '-' + uint16ToProquint(n2);
       };
 
       const sessionId = generateSessionId();
       
-      // Should be uppercase alphanumeric
-      expect(sessionId).toMatch(/^[A-Z0-9]+$/);
-      // Should be reasonable length
-      expect(sessionId.length).toBeGreaterThan(0);
-      expect(sessionId.length).toBeLessThanOrEqual(6);
+      // Should be proquint format (e.g., "lusab-babad")
+      expect(sessionId).toMatch(/^[bdfghjklmnprstvzaiou]{5}-[bdfghjklmnprstvzaiou]{5}$/);
+      // Should be exactly 11 characters
+      expect(sessionId.length).toBe(11);
     });
 
     it('should generate unique session IDs', () => {
       const generateSessionId = () => {
-        return Math.random().toString(36).substring(2, 8).toUpperCase();
+        const n1 = Math.floor(Math.random() * 65536);
+        const n2 = Math.floor(Math.random() * 65536);
+        return uint16ToProquint(n1) + '-' + uint16ToProquint(n2);
       };
 
       const ids = new Set();
@@ -141,8 +158,8 @@ describe('Data Structure Tests', () => {
         ids.add(generateSessionId());
       }
 
-      // High uniqueness expected
-      expect(ids.size).toBeGreaterThan(900);
+      // High uniqueness expected (32-bit space = 4.3 billion possibilities)
+      expect(ids.size).toBeGreaterThan(990);
     });
   });
 

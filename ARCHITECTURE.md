@@ -69,13 +69,17 @@ TshirtEstimator/
 
 ### app.js
 - **Purpose**: Main application logic and event handling
-- **Size**: ~180 lines
+- **Size**: ~200 lines
 - **Responsibility**: Application flow and business logic
 - **Key Features**:
   - Event listener setup
   - Session creation and joining logic
   - State management (currentSession, currentParticipant)
   - Real-time subscription management
+  - Proquint session ID generation (pronounceable, memorable IDs)
+- **Key Functions**:
+  - `uint16ToProquint()` - Converts 16-bit numbers to pronounceable 5-character strings
+  - `generateSessionId()` - Generates proquint-encoded session IDs (e.g., "lusab-babad")
 - **Entry Point**: Initializes the application on load
 
 ## Module Dependencies
