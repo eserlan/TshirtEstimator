@@ -183,6 +183,66 @@ h1 {
     }
 }
 
+.average-size-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: var(--card-background-color);
+    border-radius: 0.5rem;
+    border: 1px solid var(--card-border-color);
+}
+
+.average-size-section h4 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    font-size: 1.25rem;
+}
+
+.average-size-section h4 span {
+    color: #4caf50;
+    font-size: 1.5rem;
+}
+
+.sizes-svg {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    margin: 1rem auto;
+    display: block;
+}
+
+.size-legend {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.legend-icon {
+    font-size: 1.5rem;
+    display: inline-block;
+    line-height: 1;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.legend-label {
+    font-weight: 500;
+}
+
 .participant-button-list {
     display: flex;
     flex-direction: column;
