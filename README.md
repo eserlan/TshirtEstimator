@@ -10,6 +10,7 @@ A real-time web application for collaborative T-shirt size estimation. Multiple 
 - 🔥 **Firebase Integration**: Real-time data synchronization with Firestore
 - 🎨 **Modern UI**: Clean, responsive design using Pico CSS
 - 📱 **Mobile-Friendly**: Works seamlessly on all devices
+- 🔤 **Proquint Session IDs**: Pronounceable, memorable session IDs (e.g., "lusab-babad") that are easy to share with collaborators
 
 ## Getting Started
 
@@ -53,7 +54,7 @@ A real-time web application for collaborative T-shirt size estimation. Multiple 
 2. Enter participant names separated by commas (e.g., "Alice, Bob, Charlie")
 3. Click "Create Session"
 4. Select your name from the prompt
-5. Share the Session ID with other participants
+5. Share the Session ID with other participants (e.g., "lusab-babad" - easy to pronounce and remember!)
 
 ### Joining a Session
 
