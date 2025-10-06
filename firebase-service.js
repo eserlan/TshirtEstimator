@@ -57,4 +57,32 @@ export async function submitEstimate(sessionId, currentParticipant, size) {
     }
 }
 
-export { db };
+export async function addParticipant(sessionId, participantName) {
+    const sessionRef = doc(db, 'sessions', sessionId);
+    const sessionDoc = await getDoc(sessionRef);
+
+    if (sessionDoc.exists()) {
+        const sessionData = sessionDoc.data();
+        const participants = sessionData.participants;
+
+        // Check if participant already exists
+        if (participants[participantName]) {
+            throw new Error('Participant already exists');
+        }
+
+        // Add new participant
+        participants[participantName] = {
+            name: participantName,
+            estimate: null,
+            submitted: false
+        };
+
+        // Update allSubmitted status
+        const allSubmitted = Object.values(participants).every(p => p.submitted);
+
+        await updateDoc(sessionRef, {
+            participants: participants,
+            allSubmitted: allSubmitted
+        });
+    }
+}

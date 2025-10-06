@@ -1,4 +1,4 @@
-import { createSession, getSession, subscribeToSession, submitEstimate } from './firebase-service.js';
+import { createSession, getSession, subscribeToSession, submitEstimate, addParticipant } from './firebase-service.js';
 import { elements, switchToEstimationView, switchToSetupView, updateSessionUI } from './ui.js';
 
 // Global state
@@ -45,6 +45,16 @@ function showParticipantModal(participants, sessionId, alreadySelectedParticipan
             resolve('__VIEW_RESULTS__');
         });
         participantButtonList.appendChild(viewResultsButton);
+
+        // Add "Join as New Participant" button
+        const joinNewButton = document.createElement('button');
+        joinNewButton.textContent = '➕ Join as New Participant';
+        joinNewButton.classList.add('secondary');
+        joinNewButton.addEventListener('click', () => {
+            participantModal.close();
+            resolve('__JOIN_NEW__');
+        });
+        participantButtonList.appendChild(joinNewButton);
 
         // Show the modal
         participantModal.showModal();
@@ -104,6 +114,12 @@ function setupEventListeners() {
     document.querySelectorAll('.estimate-btn').forEach(button => {
         button.addEventListener('click', handleEstimateSubmission);
     });
+
+    // Join session button on results page
+    const joinSessionButton = document.getElementById('joinSessionButton');
+    if (joinSessionButton) {
+        joinSessionButton.addEventListener('click', handleJoinFromResults);
+    }
 }
 
 // Handle create session
@@ -142,6 +158,9 @@ async function handleCreateSession(e) {
             // View-only mode - load session without participant
             currentParticipant = null;
             loadSession(sessionId);
+        } else if (participantName === '__JOIN_NEW__') {
+            // Join as new participant
+            await handleJoinAsNewParticipant(sessionId);
         } else if (participantName && participants[participantName]) {
             currentParticipant = participantName;
             loadSession(sessionId);
@@ -183,6 +202,9 @@ async function handleJoinSession(e) {
             // View-only mode - load session without participant
             currentParticipant = null;
             loadSession(sessionId);
+        } else if (participantName === '__JOIN_NEW__') {
+            // Join as new participant
+            await handleJoinAsNewParticipant(sessionId);
         } else if (participantName && sessionData.participants[participantName]) {
             currentParticipant = participantName;
             loadSession(sessionId);
@@ -261,3 +283,60 @@ function goBackToSetup() {
 
 // Start the application
 init();
+
+// Handle joining as new participant
+async function handleJoinAsNewParticipant(sessionId) {
+    const newName = prompt('Enter a name to join as a new participant:');
+    if (newName) {
+        try {
+            await addParticipant(sessionId, newName);
+            currentParticipant = newName;
+            loadSession(sessionId);
+        } catch (error) {
+            console.error('Error adding participant:', error);
+            alert('Failed to join as new participant. Please try again.');
+        }
+    }
+}
+
+// Handle join from results page
+async function handleJoinFromResults() {
+    if (!currentSession) {
+        alert('No active session');
+        return;
+    }
+
+    try {
+        const sessionDoc = await getSession(currentSession);
+
+        if (!sessionDoc.exists()) {
+            alert('Session not found.');
+            return;
+        }
+
+        const sessionData = sessionDoc.data();
+        const participantNames = Object.keys(sessionData.participants);
+
+        // Find participants who have already submitted estimates
+        const participantsWithEstimates = participantNames.filter(
+            name => sessionData.participants[name].estimate !== null
+        );
+
+        // Show modal to select or join as new
+        const participantName = await showParticipantModal(participantNames, currentSession, participantsWithEstimates);
+
+        if (participantName === '__VIEW_RESULTS__') {
+            // Already viewing results, do nothing
+            return;
+        } else if (participantName === '__JOIN_NEW__') {
+            // Join as new participant
+            await handleJoinAsNewParticipant(currentSession);
+        } else if (participantName && sessionData.participants[participantName]) {
+            currentParticipant = participantName;
+            loadSession(currentSession);
+        }
+    } catch (error) {
+        console.error('Error joining from results:', error);
+        alert('Failed to join session. Please try again.');
+    }
+}
