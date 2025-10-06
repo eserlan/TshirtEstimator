@@ -140,142 +140,130 @@ function createSizeVisualization(participants, averageValue) {
 
     if (totalParticipants === 0) return;
 
-    // Add gradient definition
+    // Add gradient definitions
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     defs.innerHTML = `
-        <linearGradient id="tshirtGradientBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+        <linearGradient id="barGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" style="stop-color:#2196f3;stop-opacity:1" />
             <stop offset="100%" style="stop-color:#1976d2;stop-opacity:1" />
         </linearGradient>
-        <linearGradient id="tshirtGradientGreen" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#66bb6a;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#4caf50;stop-opacity:1" />
-        </linearGradient>
-        <linearGradient id="tshirtGradientOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+        <linearGradient id="barGradientAverage" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" style="stop-color:#ffa726;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#c29b0c;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#ff9800;stop-opacity:1" />
         </linearGradient>
     `;
     svg.appendChild(defs);
 
-    const startX = 30;
-    const spacing = 125;
-    const baseY = 140;
+    // Configuration
+    const barHeight = 40;
+    const barSpacing = 15;
+    const marginLeft = 80;
+    const marginRight = 60;
+    const marginTop = 30;
+    const maxBarWidth = 500;
 
-    // Draw t-shirts for each size
+    // Find max count for scaling
+    const maxCount = Math.max(...Object.values(distribution));
+
+    // Draw bars for each size
     SIZE_NAMES.forEach((size, index) => {
-        const x = startX + index * spacing;
+        const y = marginTop + index * (barHeight + barSpacing);
         const count = distribution[size];
         const sizeValue = SIZE_VALUES[size];
+        
+        // Check if this is the average
+        const isAverage = Math.round(averageValue) === sizeValue;
+        
+        // Calculate bar width (with minimum width for visibility)
+        const barWidth = maxCount > 0 ? (count / maxCount) * maxBarWidth : 0;
+        const displayWidth = count > 0 ? Math.max(barWidth, 30) : 0;
 
-        // Determine if this is the average or close to it
-        const isAverage = Math.abs(sizeValue - averageValue) < 0.5;
-        const isExactAverage = Math.round(averageValue) === sizeValue;
+        // Draw size label on the left
+        const sizeLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        sizeLabel.setAttribute('x', marginLeft - 15);
+        sizeLabel.setAttribute('y', y + barHeight / 2 + 5);
+        sizeLabel.setAttribute('text-anchor', 'end');
+        sizeLabel.setAttribute('fill', 'currentColor');
+        sizeLabel.setAttribute('font-size', isAverage ? '20' : '16');
+        sizeLabel.setAttribute('font-weight', isAverage ? 'bold' : '600');
+        sizeLabel.textContent = size;
+        svg.appendChild(sizeLabel);
 
-        // Calculate t-shirt scale based on size
-        const baseScale = 0.3 + (index * 0.1); // XS smallest, XXL largest
-        const scale = isExactAverage ? baseScale * 1.15 : baseScale;
+        // Draw bar background (faded)
+        const bgBar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        bgBar.setAttribute('x', marginLeft);
+        bgBar.setAttribute('y', y);
+        bgBar.setAttribute('width', maxBarWidth);
+        bgBar.setAttribute('height', barHeight);
+        bgBar.setAttribute('fill', 'rgba(128, 128, 128, 0.1)');
+        bgBar.setAttribute('rx', '5');
+        svg.appendChild(bgBar);
 
-        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        group.setAttribute('transform', `translate(${x}, ${baseY - (isExactAverage ? 15 : 0)})`);
-
-        // Choose color based on state
-        let fillColor = 'url(#tshirtGradientBlue)';
-        let strokeColor = '#1565c0';
-        let opacity = count > 0 ? '1' : '0.3';
-
-        if (isExactAverage) {
-            fillColor = 'url(#tshirtGradientOrange)';
-            strokeColor = '#c29b0c';
-            opacity = '1';
-        } else if (isAverage) {
-            fillColor = 'url(#tshirtGradientGreen)';
-            strokeColor = '#388e3c';
-        }
-
-        // Draw t-shirt using the favicon design
-        const tshirtScale = scale;
-        group.innerHTML = `
-            <g transform="scale(${tshirtScale})">
-                <!-- Left Sleeve -->
-                <path d="M 15 20 L 5 30 L 8 50 L 20 48 L 25 25 Z"
-                      fill="${fillColor}"
-                      stroke="${strokeColor}"
-                      stroke-width="2"
-                      opacity="${opacity}"/>
-                
-                <!-- Right Sleeve -->
-                <path d="M 85 20 L 95 30 L 92 50 L 80 48 L 75 25 Z"
-                      fill="${fillColor}"
-                      stroke="${strokeColor}"
-                      stroke-width="2"
-                      opacity="${opacity}"/>
-                
-                <!-- Main T-shirt body -->
-                <path d="M 25 25 L 25 95 L 75 95 L 75 25 L 70 25 L 65 32 Q 60 38 50 38 Q 40 38 35 32 L 30 25 Z"
-                      fill="${fillColor}"
-                      stroke="${strokeColor}"
-                      stroke-width="2.5"
-                      opacity="${opacity}"/>
-                
-                <!-- V-neck collar detail -->
-                <path d="M 35 25 L 40 32 L 50 35 L 60 32 L 65 25"
-                      fill="none"
-                      stroke="${strokeColor}"
-                      stroke-width="2"
-                      opacity="${opacity}"/>
-            </g>
-        `;
-
-        svg.appendChild(group);
-
-        // Size label
-        const sizeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        sizeText.setAttribute('x', x + 30);
-        sizeText.setAttribute('y', baseY + 45);
-        sizeText.setAttribute('text-anchor', 'middle');
-        sizeText.setAttribute('fill', 'currentColor');
-        sizeText.setAttribute('font-weight', isExactAverage ? 'bold' : 'normal');
-        sizeText.setAttribute('font-size', isExactAverage ? '18' : '16');
-        sizeText.textContent = size;
-        svg.appendChild(sizeText);
-
-        // Vote count badge
+        // Draw actual bar if there are votes
         if (count > 0) {
-            const badge = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            badge.setAttribute('cx', x + 55);
-            badge.setAttribute('cy', baseY - 30);
-            badge.setAttribute('r', '12');
-            badge.setAttribute('fill', '#ff5722');
-            badge.setAttribute('stroke', '#fff');
-            badge.setAttribute('stroke-width', '2');
-            svg.appendChild(badge);
+            const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            bar.setAttribute('x', marginLeft);
+            bar.setAttribute('y', y);
+            bar.setAttribute('width', displayWidth);
+            bar.setAttribute('height', barHeight);
+            bar.setAttribute('fill', isAverage ? 'url(#barGradientAverage)' : 'url(#barGradient)');
+            bar.setAttribute('rx', '5');
+            bar.setAttribute('opacity', '0.9');
+            
+            // Add animation
+            bar.style.animation = 'barGrow 0.6s ease-out';
+            bar.style.transformOrigin = 'left center';
+            
+            svg.appendChild(bar);
 
-            const countText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            countText.setAttribute('x', x + 55);
-            countText.setAttribute('y', baseY - 26);
-            countText.setAttribute('text-anchor', 'middle');
-            countText.setAttribute('fill', 'white');
-            countText.setAttribute('font-size', '12');
-            countText.setAttribute('font-weight', 'bold');
-            countText.textContent = count;
-            svg.appendChild(countText);
+            // Draw count label inside or outside bar
+            const countLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            const labelX = displayWidth > 50 ? marginLeft + displayWidth - 10 : marginLeft + displayWidth + 10;
+            const labelAnchor = displayWidth > 50 ? 'end' : 'start';
+            countLabel.setAttribute('x', labelX);
+            countLabel.setAttribute('y', y + barHeight / 2 + 6);
+            countLabel.setAttribute('text-anchor', labelAnchor);
+            countLabel.setAttribute('fill', displayWidth > 50 ? 'white' : 'currentColor');
+            countLabel.setAttribute('font-size', '16');
+            countLabel.setAttribute('font-weight', 'bold');
+            countLabel.textContent = count;
+            svg.appendChild(countLabel);
         }
 
-        // Average indicator arrow
-        if (isExactAverage) {
-            const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            arrow.setAttribute('x', x + 30);
-            arrow.setAttribute('y', baseY - 45);
-            arrow.setAttribute('text-anchor', 'middle');
-            arrow.setAttribute('fill', '#c29b0c');
-            arrow.setAttribute('font-size', '24');
-            arrow.textContent = '⭐';
-            svg.appendChild(arrow);
+        // Add star indicator for average
+        if (isAverage) {
+            const star = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            star.setAttribute('x', marginLeft + maxBarWidth + 15);
+            star.setAttribute('y', y + barHeight / 2 + 7);
+            star.setAttribute('text-anchor', 'start');
+            star.setAttribute('fill', '#ffa726');
+            star.setAttribute('font-size', '24');
+            star.textContent = '⭐';
+            svg.appendChild(star);
+
+            const avgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            avgLabel.setAttribute('x', marginLeft + maxBarWidth + 40);
+            avgLabel.setAttribute('y', y + barHeight / 2 + 6);
+            avgLabel.setAttribute('text-anchor', 'start');
+            avgLabel.setAttribute('fill', '#ffa726');
+            avgLabel.setAttribute('font-size', '14');
+            avgLabel.setAttribute('font-weight', 'bold');
+            avgLabel.textContent = 'Average';
+            svg.appendChild(avgLabel);
         }
     });
 
-
+    // Add legend
+    legend.innerHTML = `
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(to right, #2196f3, #1976d2);"></div>
+            <span class="legend-label">Vote Count</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-icon">⭐</span>
+            <span class="legend-label">Average Estimate</span>
+        </div>
+    `;
 }
 
 function showResults(participants) {
