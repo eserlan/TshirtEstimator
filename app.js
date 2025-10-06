@@ -6,12 +6,12 @@ let currentSession = null;
 let currentParticipant = null;
 let unsubscribe = null;
 
-// Modal elements
-const participantModal = document.getElementById('participantModal');
-const participantButtonList = document.getElementById('participantButtonList');
-
 // Show participant selection modal
 function showParticipantModal(participants, sessionId, alreadySelectedParticipants = []) {
+    // Resolve modal elements lazily to support test environments
+    const participantModal = document.getElementById('participantModal');
+    const participantButtonList = document.getElementById('participantButtonList');
+
     return new Promise((resolve) => {
         // Clear previous buttons
         participantButtonList.innerHTML = '';
@@ -281,8 +281,13 @@ function goBackToSetup() {
     switchToSetupView();
 }
 
-// Start the application
-init();
+// Start the application (only in browser, not during tests)
+// Avoid running during Vitest by checking common env markers
+const isVitest = (typeof process !== 'undefined' && (process.env?.VITEST || process.env?.NODE_ENV === 'test'))
+  || (typeof globalThis !== 'undefined' && (globalThis.__VITEST__ || globalThis.vitest));
+if (!isVitest && typeof window !== 'undefined' && typeof document !== 'undefined') {
+    init();
+}
 
 // Handle joining as new participant
 async function handleJoinAsNewParticipant(sessionId) {
@@ -340,3 +345,32 @@ async function handleJoinFromResults() {
         alert('Failed to join session. Please try again.');
     }
 }
+
+// Test helpers: expose selected internals for unit tests without changing runtime behavior
+export const __test = {
+    _getState: () => ({ currentSession, currentParticipant, unsubscribe }),
+    _setState: (s = {}) => {
+        if ('currentSession' in s) currentSession = s.currentSession;
+        if ('currentParticipant' in s) currentParticipant = s.currentParticipant;
+        if ('unsubscribe' in s) unsubscribe = s.unsubscribe;
+    }
+};
+
+// Export internal functions to enable direct testing
+export {
+    showParticipantModal,
+    // proquint helper intentionally kept private; generateSessionId uses it
+    // lifecycle and handlers
+    // (exported for tests only; no change to production imports)
+    // eslint-disable-next-line
+    init,
+    setupEventListeners,
+    handleCreateSession,
+    handleJoinSession,
+    loadSession,
+    handleEstimateSubmission,
+    handleBackButton,
+    goBackToSetup,
+    handleJoinAsNewParticipant,
+    handleJoinFromResults
+};

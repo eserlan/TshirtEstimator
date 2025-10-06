@@ -1,19 +1,19 @@
-// DOM element references
+// DOM element references - using getters for lazy initialization
 export const elements = {
-    setupView: document.getElementById('setupView'),
-    estimationView: document.getElementById('estimationView'),
-    createSessionForm: document.getElementById('createSessionForm'),
-    joinSessionForm: document.getElementById('joinSessionForm'),
-    backButton: document.getElementById('backButton'),
-    taskTitle: document.getElementById('taskTitle'),
-    currentSessionId: document.getElementById('currentSessionId'),
-    participantsList: document.getElementById('participantsList'),
-    resultsSection: document.getElementById('resultsSection'),
-    resultsGrid: document.getElementById('resultsGrid'),
-    waitingSection: document.getElementById('waitingSection'),
-    yourEstimationSection: document.getElementById('yourEstimationSection'),
-    yourEstimateDisplay: document.getElementById('yourEstimateDisplay'),
-    yourEstimate: document.getElementById('yourEstimate')
+    get setupView() { return document.getElementById('setupView'); },
+    get estimationView() { return document.getElementById('estimationView'); },
+    get createSessionForm() { return document.getElementById('createSessionForm'); },
+    get joinSessionForm() { return document.getElementById('joinSessionForm'); },
+    get backButton() { return document.getElementById('backButton'); },
+    get taskTitle() { return document.getElementById('taskTitle'); },
+    get currentSessionId() { return document.getElementById('currentSessionId'); },
+    get participantsList() { return document.getElementById('participantsList'); },
+    get resultsSection() { return document.getElementById('resultsSection'); },
+    get resultsGrid() { return document.getElementById('resultsGrid'); },
+    get waitingSection() { return document.getElementById('waitingSection'); },
+    get yourEstimationSection() { return document.getElementById('yourEstimationSection'); },
+    get yourEstimateDisplay() { return document.getElementById('yourEstimateDisplay'); },
+    get yourEstimate() { return document.getElementById('yourEstimate'); }
 };
 
 // UI update functions
@@ -27,9 +27,13 @@ export function switchToSetupView() {
     elements.setupView.classList.remove('hidden');
     elements.estimationView.classList.add('hidden');
     
-    // Reset forms
-    elements.createSessionForm.reset();
-    elements.joinSessionForm.reset();
+    // Reset forms (with fallback for test environments)
+    if (elements.createSessionForm && typeof elements.createSessionForm.reset === 'function') {
+        elements.createSessionForm.reset();
+    }
+    if (elements.joinSessionForm && typeof elements.joinSessionForm.reset === 'function') {
+        elements.joinSessionForm.reset();
+    }
 }
 
 export function updateSessionUI(sessionData, currentParticipant) {

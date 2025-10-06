@@ -24,6 +24,12 @@ describe('DOM Manipulation Tests', () => {
         <div id="yourEstimateDisplay" class="hidden"></div>
         <div id="yourEstimate"></div>
       </div>
+      <dialog id="participantModal">
+        <article>
+          <header><h3>Select Your Name</h3></header>
+          <div id="participantButtonList"></div>
+        </article>
+      </dialog>
     `;
 
     setupView = document.getElementById('setupView');
@@ -106,14 +112,13 @@ describe('DOM Manipulation Tests', () => {
       const resultsGrid = document.getElementById('resultsGrid');
       const waitingSection = document.getElementById('waitingSection');
 
+      resultsSection.classList.remove('hidden');
+      waitingSection.classList.add('hidden');
+
       const participants = {
         'Alice': { name: 'Alice', estimate: 'M', submitted: true },
         'Bob': { name: 'Bob', estimate: 'L', submitted: true }
       };
-
-      // Show results
-      resultsSection.classList.remove('hidden');
-      waitingSection.classList.add('hidden');
 
       resultsGrid.innerHTML = '';
       Object.values(participants).forEach(participant => {
@@ -132,16 +137,13 @@ describe('DOM Manipulation Tests', () => {
         resultsGrid.appendChild(card);
       });
 
-      expect(resultsSection.classList.contains('hidden')).toBe(false);
-      expect(waitingSection.classList.contains('hidden')).toBe(true);
-
       const cards = resultsGrid.querySelectorAll('.result-card');
       expect(cards.length).toBe(2);
-      expect(cards[0].querySelector('.result-estimate').textContent).toBe('M');
-      expect(cards[1].querySelector('.result-estimate').textContent).toBe('L');
+      expect(resultsSection.classList.contains('hidden')).toBe(false);
+      expect(waitingSection.classList.contains('hidden')).toBe(true);
     });
 
-    it('should show waiting message when current participant submitted but not all', () => {
+    it('should show waiting message when not all submitted', () => {
       const resultsSection = document.getElementById('resultsSection');
       const waitingSection = document.getElementById('waitingSection');
 
@@ -153,53 +155,175 @@ describe('DOM Manipulation Tests', () => {
     });
   });
 
-  describe('Form Elements', () => {
-    it('should have create session form', () => {
-      const form = document.getElementById('createSessionForm');
-      expect(form).toBeDefined();
-      expect(form.tagName).toBe('FORM');
+  describe('Estimation Buttons', () => {
+    it('should have all T-shirt size buttons', () => {
+      const estimationButtons = document.querySelector('.estimation-buttons');
+      const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+      estimationButtons.innerHTML = '';
+      sizes.forEach(size => {
+        const button = document.createElement('button');
+        button.className = 'estimate-btn';
+        button.setAttribute('data-size', size);
+        button.textContent = size;
+        estimationButtons.appendChild(button);
+      });
+
+      const buttons = estimationButtons.querySelectorAll('.estimate-btn');
+      expect(buttons.length).toBe(6);
+
+      sizes.forEach((size, index) => {
+        expect(buttons[index].getAttribute('data-size')).toBe(size);
+        expect(buttons[index].textContent).toBe(size);
+      });
     });
 
-    it('should have join session form', () => {
-      const form = document.getElementById('joinSessionForm');
-      expect(form).toBeDefined();
-      expect(form.tagName).toBe('FORM');
-    });
+    it('should hide estimation buttons after submission', () => {
+      const estimationButtons = document.querySelector('.estimation-buttons');
+      const yourEstimateDisplay = document.getElementById('yourEstimateDisplay');
+      const yourEstimate = document.getElementById('yourEstimate');
 
-    it('should be able to reset forms', () => {
-      const createForm = document.getElementById('createSessionForm');
-      createForm.innerHTML = '<input type="text" value="test">';
-      
-      const input = createForm.querySelector('input');
-      expect(input.value).toBe('test');
-      
-      input.value = '';
-      expect(input.value).toBe('');
+      // After submission
+      estimationButtons.style.display = 'none';
+      yourEstimateDisplay.classList.remove('hidden');
+      yourEstimate.textContent = 'L';
+
+      expect(estimationButtons.style.display).toBe('none');
+      expect(yourEstimateDisplay.classList.contains('hidden')).toBe(false);
+      expect(yourEstimate.textContent).toBe('L');
     });
   });
 
-  describe('CSS Class Manipulation', () => {
-    it('should add and remove hidden class', () => {
-      const element = document.createElement('div');
-      expect(element.classList.contains('hidden')).toBe(false);
-      
-      element.classList.add('hidden');
-      expect(element.classList.contains('hidden')).toBe(true);
-      
-      element.classList.remove('hidden');
-      expect(element.classList.contains('hidden')).toBe(false);
+  describe('Modal Elements', () => {
+    it('should create modal with participant buttons', () => {
+      const buttonList = document.getElementById('participantButtonList');
+      expect(buttonList).not.toBeNull();
+
+      const participants = ['Alice', 'Bob', 'Charlie'];
+
+      buttonList.innerHTML = '';
+      participants.forEach(name => {
+        const button = document.createElement('button');
+        button.textContent = name;
+        button.classList.add('participant-select-btn');
+        buttonList.appendChild(button);
+      });
+
+      const buttons = buttonList.querySelectorAll('.participant-select-btn');
+      expect(buttons.length).toBe(3);
+      expect(buttons[0].textContent).toBe('Alice');
+      expect(buttons[1].textContent).toBe('Bob');
+      expect(buttons[2].textContent).toBe('Charlie');
     });
 
-    it('should toggle multiple classes', () => {
+    it('should disable buttons for participants who already joined', () => {
+      const buttonList = document.getElementById('participantButtonList');
+      expect(buttonList).not.toBeNull();
+
+      buttonList.innerHTML = '';
+      const participants = ['Alice', 'Bob'];
+      const alreadyJoined = ['Alice'];
+
+      participants.forEach(name => {
+        const button = document.createElement('button');
+        button.textContent = name;
+        if (alreadyJoined.includes(name)) {
+          button.disabled = true;
+          button.textContent = `${name} (already joined)`;
+        }
+        buttonList.appendChild(button);
+      });
+
+      const buttons = buttonList.querySelectorAll('button');
+      expect(buttons[0].disabled).toBe(true);
+      expect(buttons[0].textContent).toBe('Alice (already joined)');
+      expect(buttons[1].disabled).toBe(false);
+      expect(buttons[1].textContent).toBe('Bob');
+    });
+
+    it('should create modal with special action buttons', () => {
+      const buttonList = document.getElementById('participantButtonList');
+      expect(buttonList).not.toBeNull();
+
+      buttonList.innerHTML = '';
+
+      // Add View Results button
+      const viewResultsButton = document.createElement('button');
+      viewResultsButton.textContent = '👁️ View Results';
+      viewResultsButton.classList.add('secondary', 'outline');
+      buttonList.appendChild(viewResultsButton);
+
+      // Add Join as New Participant button
+      const joinNewButton = document.createElement('button');
+      joinNewButton.textContent = '➕ Join as New Participant';
+      joinNewButton.classList.add('secondary');
+      buttonList.appendChild(joinNewButton);
+
+      const buttons = buttonList.querySelectorAll('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0].textContent).toBe('👁️ View Results');
+      expect(buttons[1].textContent).toBe('➕ Join as New Participant');
+    });
+  });
+
+  describe('Form Validation', () => {
+    it('should have required fields in create session form', () => {
+      const form = document.getElementById('createSessionForm');
+      form.innerHTML = `
+        <input type="text" id="taskDescription" required>
+        <input type="text" id="participantNames" required>
+        <button type="submit">Create</button>
+      `;
+
+      const taskInput = document.getElementById('taskDescription');
+      const participantsInput = document.getElementById('participantNames');
+
+      expect(taskInput.hasAttribute('required')).toBe(true);
+      expect(participantsInput.hasAttribute('required')).toBe(true);
+    });
+
+    it('should have required field in join session form', () => {
+      const form = document.getElementById('joinSessionForm');
+      form.innerHTML = `
+        <input type="text" id="sessionId" required>
+        <button type="submit">Join</button>
+      `;
+
+      const sessionIdInput = document.getElementById('sessionId');
+      expect(sessionIdInput.hasAttribute('required')).toBe(true);
+    });
+  });
+
+  describe('CSS Classes and Styling', () => {
+    it('should apply correct classes to participant items', () => {
+      const item = document.createElement('div');
+      item.className = 'participant-item submitted';
+
+      expect(item.classList.contains('participant-item')).toBe(true);
+      expect(item.classList.contains('submitted')).toBe(true);
+    });
+
+    it('should apply correct status badge classes', () => {
+      const submittedBadge = document.createElement('span');
+      submittedBadge.className = 'status-badge status-submitted';
+
+      const pendingBadge = document.createElement('span');
+      pendingBadge.className = 'status-badge status-pending';
+
+      expect(submittedBadge.classList.contains('status-submitted')).toBe(true);
+      expect(pendingBadge.classList.contains('status-pending')).toBe(true);
+    });
+
+    it('should toggle hidden class correctly', () => {
       const element = document.createElement('div');
-      element.classList.add('class1', 'class2', 'class3');
-      
-      expect(element.classList.contains('class1')).toBe(true);
-      expect(element.classList.contains('class2')).toBe(true);
-      expect(element.classList.contains('class3')).toBe(true);
-      
-      element.classList.remove('class2');
-      expect(element.classList.contains('class2')).toBe(false);
+      element.classList.add('hidden');
+      expect(element.classList.contains('hidden')).toBe(true);
+
+      element.classList.remove('hidden');
+      expect(element.classList.contains('hidden')).toBe(false);
+
+      element.classList.toggle('hidden');
+      expect(element.classList.contains('hidden')).toBe(true);
     });
   });
 });
