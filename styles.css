@@ -290,13 +290,13 @@ h1 {
     background-color: rgba(76, 175, 80, 0.3);
 }
 
-@keyframes barGrow {
+@keyframes barGrowVertical {
     from {
-        transform: scaleX(0);
+        transform: scaleY(0);
         opacity: 0;
     }
     to {
-        transform: scaleX(1);
-        opacity: 0.9;
+        transform: scaleY(1);
+        opacity: 0.95;
     }
 }
