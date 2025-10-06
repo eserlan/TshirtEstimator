@@ -172,8 +172,9 @@ describe('UI Module Tests', () => {
 
       updateSessionUI(allSubmittedData, 'Alice');
 
-      const resultCards = elements.resultsGrid.querySelectorAll('.result-card');
-      expect(resultCards.length).toBe(2);
+      // Check that votes are revealed in the participants list
+      const revealedVotes = elements.participantsList.querySelectorAll('.vote-revealed');
+      expect(revealedVotes.length).toBe(2);
     });
 
     it('should handle view-only mode (no current participant)', () => {

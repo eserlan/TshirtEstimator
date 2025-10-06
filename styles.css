@@ -75,6 +75,9 @@ h2, h3 {
     border-radius: 1rem;
     font-size: 0.875rem;
     font-weight: 600;
+    min-width: 70px;
+    text-align: center;
+    display: inline-block;
 }
 
 .status-submitted {
@@ -85,6 +88,32 @@ h2, h3 {
 .status-pending {
     background-color: #ff9800;
     color: white;
+}
+
+.status-badge.vote-hidden {
+    background-color: #9c27b0;
+    position: relative;
+    overflow: hidden;
+}
+
+.status-badge.vote-revealed {
+    background-color: #4caf50;
+    font-weight: bold;
+    animation: revealVote 0.5s ease-out;
+}
+
+@keyframes revealVote {
+    0% {
+        transform: scale(0.8) rotateY(90deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1) rotateY(0deg);
+    }
+    100% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+    }
 }
 
 .results-grid {
@@ -257,4 +286,14 @@ h1 {
 .participant-button-list button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.participant-button-list button.already-voted {
+    background-color: rgba(76, 175, 80, 0.2);
+    border: 2px solid #4caf50;
+    color: var(--color);
+}
+
+.participant-button-list button.already-voted:hover {
+    background-color: rgba(76, 175, 80, 0.3);
 }

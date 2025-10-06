@@ -19,13 +19,14 @@ function showParticipantModal(participants, sessionId, alreadySelectedParticipan
         // Create button for each participant
         participants.forEach(participantName => {
             const button = document.createElement('button');
-            button.textContent = participantName;
             button.classList.add('participant-select-btn');
 
-            // Disable if already selected
+            // Mark if already voted (but keep clickable)
             if (alreadySelectedParticipants.includes(participantName)) {
-                button.disabled = true;
-                button.textContent = `${participantName} (already joined)`;
+                button.textContent = `${participantName} ✓ (voted)`;
+                button.classList.add('already-voted');
+            } else {
+                button.textContent = participantName;
             }
 
             button.addEventListener('click', () => {

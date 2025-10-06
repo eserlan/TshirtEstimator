@@ -298,28 +298,13 @@ function showResults(participants) {
     if (averageValue !== null) {
         createSizeVisualization(participants, averageValue);
     }
-
-    // Display results
-    elements.resultsGrid.innerHTML = '';
-    Object.values(participants).forEach(participant => {
-        const card = document.createElement('div');
-        card.className = 'result-card';
-
-        const name = document.createElement('div');
-        name.textContent = participant.name;
-
-        const estimate = document.createElement('div');
-        estimate.className = 'result-estimate';
-        estimate.textContent = participant.estimate;
-
-        card.appendChild(name);
-        card.appendChild(estimate);
-        elements.resultsGrid.appendChild(card);
-    });
 }
 
 function updateParticipantsList(participants) {
     elements.participantsList.innerHTML = '';
+
+    // Check if all participants have submitted
+    const allSubmitted = Object.values(participants).every(p => p.submitted);
 
     Object.values(participants).forEach(participant => {
         const item = document.createElement('div');
@@ -330,7 +315,20 @@ function updateParticipantsList(participants) {
 
         const status = document.createElement('span');
         status.className = `status-badge ${participant.submitted ? 'status-submitted' : 'status-pending'}`;
-        status.textContent = participant.submitted ? '✓ Submitted' : '⏳ Pending';
+
+        if (participant.submitted) {
+            if (allSubmitted) {
+                // All votes are in - reveal the actual vote
+                status.classList.add('vote-revealed');
+                status.textContent = participant.estimate;
+            } else {
+                // Still waiting - show submitted but obscure the vote
+                status.classList.add('vote-hidden');
+                status.textContent = '✓ Voted';
+            }
+        } else {
+            status.textContent = '⏳ Pending';
+        }
 
         item.appendChild(name);
         item.appendChild(status);
