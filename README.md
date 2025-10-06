@@ -29,12 +29,13 @@ A real-time web application for collaborative T-shirt size estimation. Multiple 
    - Go to Project Settings > General
    - Scroll down to "Your apps" and click the web icon (</>)
    - Copy the Firebase configuration object
-4. Update the `firebaseConfig` object in `index.html` with your credentials
+4. Update the `firebaseConfig` object in `firebase-config.js` with your credentials
 
 ### Running the Application
 
-1. Simply open `index.html` in a web browser, or
-2. Serve it using a local web server:
+**Note**: This application uses ES6 modules and requires a web server to run (cannot be opened directly as `file://`).
+
+1. Serve the application using a local web server:
    ```bash
    # Using Python
    python -m http.server 8000
@@ -76,11 +77,28 @@ A real-time web application for collaborative T-shirt size estimation. Multiple 
 ## Technical Stack
 
 - **HTML5**: Structure and semantic markup
-- **JavaScript (ES6+)**: Application logic and Firebase integration
+- **JavaScript (ES6+ Modules)**: Application logic and Firebase integration
 - **CSS3**: Styling with Pico CSS framework
 - **Firebase Firestore**: Real-time database for storing and syncing estimates
 
-## Architecture
+## Project Structure
+
+The application is organized into modular files for better maintainability:
+
+```
+TshirtEstimator/
+├── index.html           # Pure structural HTML
+├── styles.css           # Custom CSS styles
+├── firebase-config.js   # Firebase configuration
+├── firebase-service.js  # Firebase operations
+├── ui.js               # UI manipulation
+├── app.js              # Main application logic
+└── ARCHITECTURE.md      # Detailed architecture documentation
+```
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed information about the codebase structure.
+
+## Database Architecture
 
 The application uses a simple document-based structure in Firestore:
 
