@@ -134,6 +134,7 @@ function createSizeVisualization(participants, averageValue) {
     // Clear previous content
     svg.innerHTML = '';
     legend.innerHTML = '';
+    legend.classList.add('hidden');
 
     const distribution = getSizeDistribution(participants);
     const totalParticipants = Object.values(distribution).reduce((a, b) => a + b, 0);
@@ -143,127 +144,108 @@ function createSizeVisualization(participants, averageValue) {
     // Add gradient definitions
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     defs.innerHTML = `
-        <linearGradient id="barGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <linearGradient id="barGradient" x1="0%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" style="stop-color:#2196f3;stop-opacity:1" />
             <stop offset="100%" style="stop-color:#1976d2;stop-opacity:1" />
         </linearGradient>
-        <linearGradient id="barGradientAverage" x1="0%" y1="0%" x2="100%" y2="0%">
+        <linearGradient id="barGradientAverage" x1="0%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" style="stop-color:#ffa726;stop-opacity:1" />
             <stop offset="100%" style="stop-color:#ff9800;stop-opacity:1" />
         </linearGradient>
     `;
     svg.appendChild(defs);
 
-    // Configuration
-    const barHeight = 40;
-    const barSpacing = 15;
-    const marginLeft = 80;
-    const marginRight = 60;
-    const marginTop = 30;
-    const maxBarWidth = 500;
+    // Configuration for vertical layout
+    const width = 700;
+    const height = 400;
+    const margin = { top: 30, right: 40, bottom: 80, left: 40 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
 
-    // Find max count for scaling
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+    const chartGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    chartGroup.setAttribute('transform', `translate(${margin.left}, ${margin.top})`);
+    svg.appendChild(chartGroup);
+
+    const baseline = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    baseline.setAttribute('x1', '0');
+    baseline.setAttribute('y1', chartHeight);
+    baseline.setAttribute('x2', chartWidth);
+    baseline.setAttribute('y2', chartHeight);
+    baseline.setAttribute('stroke', 'rgba(255, 255, 255, 0.2)');
+    baseline.setAttribute('stroke-width', '2');
+    chartGroup.appendChild(baseline);
+
     const maxCount = Math.max(...Object.values(distribution));
+    const sectionWidth = chartWidth / SIZE_NAMES.length;
+    const barWidth = Math.min(60, sectionWidth * 0.6);
 
-    // Draw bars for each size
     SIZE_NAMES.forEach((size, index) => {
-        const y = marginTop + index * (barHeight + barSpacing);
         const count = distribution[size];
         const sizeValue = SIZE_VALUES[size];
-        
-        // Check if this is the average
         const isAverage = Math.round(averageValue) === sizeValue;
-        
-        // Calculate bar width (with minimum width for visibility)
-        const barWidth = maxCount > 0 ? (count / maxCount) * maxBarWidth : 0;
-        const displayWidth = count > 0 ? Math.max(barWidth, 30) : 0;
 
-        // Draw size label on the left
+        const barHeight = maxCount > 0 ? (count / maxCount) * chartHeight : 0;
+        const x = index * sectionWidth + (sectionWidth - barWidth) / 2;
+        const y = chartHeight - barHeight;
+
+        const bgBar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        bgBar.setAttribute('x', index * sectionWidth + (sectionWidth - barWidth) / 2);
+        bgBar.setAttribute('y', 0);
+        bgBar.setAttribute('width', barWidth);
+        bgBar.setAttribute('height', chartHeight);
+        bgBar.setAttribute('fill', 'rgba(128, 128, 128, 0.1)');
+        bgBar.setAttribute('rx', '6');
+        chartGroup.appendChild(bgBar);
+
+        if (count > 0) {
+            const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            bar.setAttribute('x', x);
+            bar.setAttribute('y', y);
+            bar.setAttribute('width', barWidth);
+            bar.setAttribute('height', barHeight);
+            bar.setAttribute('fill', isAverage ? 'url(#barGradientAverage)' : 'url(#barGradient)');
+            bar.setAttribute('rx', '6');
+            bar.setAttribute('opacity', '0.95');
+            bar.style.animation = 'barGrowVertical 0.6s ease-out';
+            bar.style.transformOrigin = 'center bottom';
+            chartGroup.appendChild(bar);
+
+            const countLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            countLabel.setAttribute('x', x + barWidth / 2);
+            countLabel.setAttribute('y', y - 10);
+            countLabel.setAttribute('text-anchor', 'middle');
+            countLabel.setAttribute('fill', 'currentColor');
+            countLabel.setAttribute('font-size', '16');
+            countLabel.setAttribute('font-weight', 'bold');
+            countLabel.textContent = count;
+            chartGroup.appendChild(countLabel);
+        }
+
         const sizeLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        sizeLabel.setAttribute('x', marginLeft - 15);
-        sizeLabel.setAttribute('y', y + barHeight / 2 + 5);
-        sizeLabel.setAttribute('text-anchor', 'end');
+        sizeLabel.setAttribute('x', index * sectionWidth + sectionWidth / 2);
+        sizeLabel.setAttribute('y', chartHeight + 30);
+        sizeLabel.setAttribute('text-anchor', 'middle');
         sizeLabel.setAttribute('fill', 'currentColor');
         sizeLabel.setAttribute('font-size', isAverage ? '20' : '16');
         sizeLabel.setAttribute('font-weight', isAverage ? 'bold' : '600');
         sizeLabel.textContent = size;
-        svg.appendChild(sizeLabel);
+        chartGroup.appendChild(sizeLabel);
 
-        // Draw bar background (faded)
-        const bgBar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        bgBar.setAttribute('x', marginLeft);
-        bgBar.setAttribute('y', y);
-        bgBar.setAttribute('width', maxBarWidth);
-        bgBar.setAttribute('height', barHeight);
-        bgBar.setAttribute('fill', 'rgba(128, 128, 128, 0.1)');
-        bgBar.setAttribute('rx', '5');
-        svg.appendChild(bgBar);
-
-        // Draw actual bar if there are votes
-        if (count > 0) {
-            const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            bar.setAttribute('x', marginLeft);
-            bar.setAttribute('y', y);
-            bar.setAttribute('width', displayWidth);
-            bar.setAttribute('height', barHeight);
-            bar.setAttribute('fill', isAverage ? 'url(#barGradientAverage)' : 'url(#barGradient)');
-            bar.setAttribute('rx', '5');
-            bar.setAttribute('opacity', '0.9');
-            
-            // Add animation
-            bar.style.animation = 'barGrow 0.6s ease-out';
-            bar.style.transformOrigin = 'left center';
-            
-            svg.appendChild(bar);
-
-            // Draw count label inside or outside bar
-            const countLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            const labelX = displayWidth > 50 ? marginLeft + displayWidth - 10 : marginLeft + displayWidth + 10;
-            const labelAnchor = displayWidth > 50 ? 'end' : 'start';
-            countLabel.setAttribute('x', labelX);
-            countLabel.setAttribute('y', y + barHeight / 2 + 6);
-            countLabel.setAttribute('text-anchor', labelAnchor);
-            countLabel.setAttribute('fill', displayWidth > 50 ? 'white' : 'currentColor');
-            countLabel.setAttribute('font-size', '16');
-            countLabel.setAttribute('font-weight', 'bold');
-            countLabel.textContent = count;
-            svg.appendChild(countLabel);
-        }
-
-        // Add star indicator for average
         if (isAverage) {
             const star = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            star.setAttribute('x', marginLeft + maxBarWidth + 15);
-            star.setAttribute('y', y + barHeight / 2 + 7);
-            star.setAttribute('text-anchor', 'start');
+            star.setAttribute('x', index * sectionWidth + sectionWidth / 2);
+            star.setAttribute('y', Math.max(y - 25, 0) + 10);
+            star.setAttribute('text-anchor', 'middle');
             star.setAttribute('fill', '#ffa726');
-            star.setAttribute('font-size', '24');
+            star.setAttribute('font-size', '28');
             star.textContent = '⭐';
-            svg.appendChild(star);
-
-            const avgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            avgLabel.setAttribute('x', marginLeft + maxBarWidth + 40);
-            avgLabel.setAttribute('y', y + barHeight / 2 + 6);
-            avgLabel.setAttribute('text-anchor', 'start');
-            avgLabel.setAttribute('fill', '#ffa726');
-            avgLabel.setAttribute('font-size', '14');
-            avgLabel.setAttribute('font-weight', 'bold');
-            avgLabel.textContent = 'Average';
-            svg.appendChild(avgLabel);
+            chartGroup.appendChild(star);
         }
     });
 
-    // Add legend
-    legend.innerHTML = `
-        <div class="legend-item">
-            <div class="legend-color" style="background: linear-gradient(to right, #2196f3, #1976d2);"></div>
-            <span class="legend-label">Vote Count</span>
-        </div>
-        <div class="legend-item">
-            <span class="legend-icon">⭐</span>
-            <span class="legend-label">Average Estimate</span>
-        </div>
-    `;
+    legend.innerHTML = '';
 }
 
 function showResults(participants) {
