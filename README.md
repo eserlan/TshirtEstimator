@@ -133,6 +133,31 @@ For production use:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Testing
+
+The application includes a comprehensive test suite using Vitest.
+
+### Running Tests
+
+```bash
+# Install dependencies
+npm install
+
+# Run tests once
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+See [tests/README.md](tests/README.md) for more information about the test suite.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
