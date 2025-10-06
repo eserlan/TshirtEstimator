@@ -27,6 +27,3 @@ temp/
 # Test coverage
 coverage/
 .nyc_output/
-
-# Package lock files
-package-lock.json
