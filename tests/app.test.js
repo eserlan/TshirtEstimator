@@ -57,6 +57,7 @@ import { switchToEstimationView, switchToSetupView, updateSessionUI } from '../u
 // Common DOM setup for flows
 beforeEach(() => {
   document.body.innerHTML = `
+    <h1 id="mainTitle">👕 T-shirt Estimator</h1>
     <div id="setupView"></div>
     <div id="estimationView" class="hidden"></div>
     <form id="createSessionForm"></form>

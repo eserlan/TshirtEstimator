@@ -5,6 +5,7 @@ describe('UI Module Tests', () => {
   beforeEach(() => {
     // Setup DOM
     document.body.innerHTML = `
+      <h1 id="mainTitle">👕 T-shirt Estimator</h1>
       <div id="setupView"></div>
       <div id="estimationView" class="hidden"></div>
       <form id="createSessionForm"></form>
@@ -35,6 +36,7 @@ describe('UI Module Tests', () => {
   describe('elements', () => {
     it('should export all required DOM element references', () => {
       expect(elements).toBeDefined();
+      expect(elements.mainTitle).toBeDefined();
       expect(elements.setupView).toBeDefined();
       expect(elements.estimationView).toBeDefined();
       expect(elements.createSessionForm).toBeDefined();
@@ -97,6 +99,16 @@ describe('UI Module Tests', () => {
       // The actual reset behavior is handled by the browser's form.reset() method
       expect(() => switchToSetupView()).not.toThrow();
     });
+
+    it('should reset title to default T-shirt Estimator', () => {
+      // Change title to something else
+      elements.mainTitle.textContent = '🎯 Story Point Estimator';
+
+      // Switch to setup view
+      switchToSetupView();
+
+      expect(elements.mainTitle.textContent).toBe('👕 T-shirt Estimator');
+    });
   });
 
   describe('updateSessionUI', () => {
@@ -123,6 +135,18 @@ describe('UI Module Tests', () => {
       updateSessionUI(mockSessionData, 'Alice');
 
       expect(elements.taskTitle.textContent).toBe('Implement feature X');
+    });
+
+    it('should update main title to T-shirt Estimator for tshirt sessions', () => {
+      updateSessionUI(mockSessionData, 'Alice');
+
+      expect(elements.mainTitle.textContent).toBe('👕 T-shirt Estimator');
+    });
+
+    it('should update main title to Story Point Estimator for fibonacci sessions', () => {
+      updateSessionUI(fibonacciSessionData, 'Alice');
+
+      expect(elements.mainTitle.textContent).toBe('🎯 Story Point Estimator');
     });
 
     it('should render estimation buttons for the configured mode', () => {
