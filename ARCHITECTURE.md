@@ -49,7 +49,7 @@ TshirtEstimator/
 - **Size**: ~60 lines
 - **Responsibility**: All Firebase-related functionality
 - **Key Functions**:
-  - `createSession()` - Create a new estimation session
+  - `createSession()` - Create a new estimation session (including chosen estimation scale)
   - `getSession()` - Retrieve session data
   - `subscribeToSession()` - Real-time session updates
   - `submitEstimate()` - Submit participant estimates
@@ -62,9 +62,9 @@ TshirtEstimator/
 - **Key Features**:
   - `elements` object - Cached DOM element references
   - `switchToEstimationView()` - View navigation
-  - `updateSessionUI()` - Update UI with session data
+  - `updateSessionUI()` - Update UI with session data and estimation mode configuration
   - `updateParticipantsList()` - Display participant status
-  - `showResults()` - Display estimation results
+  - `showResults()` - Display estimation results with dynamic charts for each estimation mode
 - **Exports**: UI manipulation functions and element references
 
 ### app.js
@@ -73,7 +73,7 @@ TshirtEstimator/
 - **Responsibility**: Application flow and business logic
 - **Key Features**:
   - Event listener setup
-  - Session creation and joining logic
+  - Session creation and joining logic (with estimation type selection)
   - State management (currentSession, currentParticipant)
   - Real-time subscription management
   - Proquint session ID generation (pronounceable, memorable IDs)

@@ -17,10 +17,11 @@ try {
 }
 
 // Database operations
-export async function createSession(sessionId, taskDescription, participants) {
+export async function createSession(sessionId, taskDescription, participants, estimationType) {
     await setDoc(doc(db, 'sessions', sessionId), {
         taskDescription: taskDescription,
         participants: participants,
+        estimationType: estimationType,
         createdAt: serverTimestamp(),
         allSubmitted: false
     });

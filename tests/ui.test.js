@@ -13,14 +13,19 @@ describe('UI Module Tests', () => {
       <h2 id="taskTitle"></h2>
       <div id="currentSessionId"></div>
       <div id="currentParticipantName"></div>
-      <div id="welcomeBanner" class="hidden"></div>
+      <div id="welcomeBanner" class="hidden"><p id="welcomeMessage"></p></div>
       <span id="welcomeParticipantName"></span>
       <div id="participantsList"></div>
-      <div id="resultsSection" class="hidden"></div>
+      <div id="resultsSection" class="hidden">
+        <h4 id="averageEstimateHeading"><span id="averageEstimateLabel">Average Estimate</span>: <span id="averageSize"></span></h4>
+      </div>
       <div id="resultsGrid"></div>
       <div id="waitingSection" class="hidden"></div>
       <div id="yourEstimationSection">
-        <div class="estimation-buttons"></div>
+        <div class="estimation-panel">
+          <p id="estimationPrompt" class="estimation-prompt"></p>
+          <div id="estimationButtons" class="estimation-buttons"></div>
+        </div>
       </div>
       <div id="yourEstimateDisplay" class="hidden"></div>
       <div id="yourEstimate"></div>
@@ -96,6 +101,7 @@ describe('UI Module Tests', () => {
 
   describe('updateSessionUI', () => {
     const mockSessionData = {
+      estimationType: 'tshirt',
       taskDescription: 'Implement feature X',
       participants: {
         'Alice': { name: 'Alice', estimate: 'M', submitted: true },
@@ -104,10 +110,38 @@ describe('UI Module Tests', () => {
       }
     };
 
+    const fibonacciSessionData = {
+      estimationType: 'fibonacci',
+      taskDescription: 'Estimate API work',
+      participants: {
+        'Alice': { name: 'Alice', estimate: '3', submitted: true },
+        'Bob': { name: 'Bob', estimate: '5', submitted: true }
+      }
+    };
+
     it('should update task title', () => {
       updateSessionUI(mockSessionData, 'Alice');
 
       expect(elements.taskTitle.textContent).toBe('Task: Implement feature X');
+    });
+
+    it('should render estimation buttons for the configured mode', () => {
+      updateSessionUI(mockSessionData, 'Bob');
+
+      const buttons = elements.yourEstimationSection.querySelectorAll('.estimate-btn');
+      expect(buttons.length).toBe(6);
+      expect(Array.from(buttons).map(btn => btn.textContent)).toEqual(['XS', 'S', 'M', 'L', 'XL', 'XXL']);
+    });
+
+    it('should configure planning poker sessions with Fibonacci prompt', () => {
+      updateSessionUI(fibonacciSessionData, 'Alice');
+
+      expect(elements.estimationPrompt.textContent).toBe('Select your Fibonacci estimate:');
+      expect(elements.averageEstimateLabel.textContent).toBe('Average Estimate (Planning Poker)');
+      expect(document.getElementById('averageSize').textContent).toBe('4.0 (≈3)');
+      const fibButtons = elements.yourEstimationSection.querySelectorAll('.estimate-btn');
+      expect(fibButtons.length).toBe(10);
+      expect(Array.from(fibButtons).map(btn => btn.textContent)).toEqual(['1', '2', '3', '5', '8', '13', '21', '34', '55', '89']);
     });
 
     it('should update participants list', () => {
@@ -135,7 +169,7 @@ describe('UI Module Tests', () => {
       updateSessionUI(mockSessionData, 'Bob');
 
       const estimationButtons = elements.yourEstimationSection.querySelector('.estimation-buttons');
-      expect(estimationButtons.style.display).not.toBe('none');
+      expect(estimationButtons.style.display).toBe('grid');
     });
 
     it('should show results when all participants have submitted', () => {

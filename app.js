@@ -104,17 +104,17 @@ function init() {
 function setupEventListeners() {
     // Create session form
     elements.createSessionForm.addEventListener('submit', handleCreateSession);
-    
+
     // Join session form
     elements.joinSessionForm.addEventListener('submit', handleJoinSession);
-    
+
     // Back button
     elements.backButton.addEventListener('click', handleBackButton);
-    
-    // Estimate buttons
-    document.querySelectorAll('.estimate-btn').forEach(button => {
-        button.addEventListener('click', handleEstimateSubmission);
-    });
+
+    // Estimate buttons (delegated for dynamic rendering)
+    if (elements.yourEstimationSection) {
+        elements.yourEstimationSection.addEventListener('click', handleEstimateSubmission);
+    }
 
     // Join session button on results page
     const joinSessionButton = document.getElementById('joinSessionButton');
@@ -125,14 +125,17 @@ function setupEventListeners() {
 
 // Handle create session
 async function handleCreateSession(e) {
-    e.preventDefault();
-    
+    if (typeof e.preventDefault === 'function') {
+        e.preventDefault();
+    }
+
     const taskDescription = document.getElementById('taskDescription').value.trim();
     const participantNames = document.getElementById('participantNames').value
         .split(',')
         .map(name => name.trim())
         .filter(name => name.length > 0);
-    
+    const estimationType = (document.getElementById('estimationType')?.value || 'tshirt');
+
     if (participantNames.length === 0) {
         alert('Please enter at least one participant name');
         return;
@@ -149,9 +152,9 @@ async function handleCreateSession(e) {
             submitted: false
         };
     });
-    
+
     try {
-        await createSession(sessionId, taskDescription, participants);
+        await createSession(sessionId, taskDescription, participants, estimationType);
         
         // Prompt user to select their name
         const participantName = await showParticipantModal(participantNames, sessionId);
@@ -177,7 +180,9 @@ async function handleCreateSession(e) {
 
 // Handle join session
 async function handleJoinSession(e) {
-    e.preventDefault();
+    if (typeof e.preventDefault === 'function') {
+        e.preventDefault();
+    }
     
     const sessionId = document.getElementById('sessionId').value.trim().toLowerCase();
     
@@ -249,7 +254,28 @@ function loadSession(sessionId) {
 
 // Handle estimate submission
 async function handleEstimateSubmission(e) {
-    const size = e.target.getAttribute('data-size');
+    const target = e.target;
+    let button = null;
+
+    if (typeof target?.closest === 'function') {
+        button = target.closest('.estimate-btn');
+    }
+
+    if (!button && target && typeof target.getAttribute === 'function' && target.getAttribute('data-size')) {
+        button = target;
+    }
+    if (!button) {
+        return;
+    }
+
+    if (typeof e.preventDefault === 'function') {
+        e.preventDefault();
+    }
+
+    const size = button.getAttribute('data-size');
+    if (!size) {
+        return;
+    }
     
     if (!currentSession || !currentParticipant) {
         alert('Error: Session or participant not set');
