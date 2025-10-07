@@ -85,7 +85,7 @@ export function updateSessionUI(sessionData, currentParticipant) {
 
     configureEstimationExperience(config);
 
-    elements.taskTitle.textContent = `Task: ${sessionData.taskDescription}`;
+    elements.taskTitle.textContent = `${config.shortLabel} Estimation: ${sessionData.taskDescription}`;
     elements.currentParticipantName.textContent = currentParticipant || 'Viewing Results';
 
     // Update participants list

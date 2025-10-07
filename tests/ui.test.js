@@ -122,7 +122,7 @@ describe('UI Module Tests', () => {
     it('should update task title', () => {
       updateSessionUI(mockSessionData, 'Alice');
 
-      expect(elements.taskTitle.textContent).toBe('Task: Implement feature X');
+      expect(elements.taskTitle.textContent).toBe('T-shirt Estimation: Implement feature X');
     });
 
     it('should render estimation buttons for the configured mode', () => {
@@ -136,6 +136,7 @@ describe('UI Module Tests', () => {
     it('should configure planning poker sessions with Fibonacci prompt', () => {
       updateSessionUI(fibonacciSessionData, 'Alice');
 
+      expect(elements.taskTitle.textContent).toBe('Planning Poker Estimation: Estimate API work');
       expect(elements.estimationPrompt.textContent).toBe('Select your Fibonacci estimate:');
       expect(elements.averageEstimateLabel.textContent).toBe('Average Estimate (Planning Poker)');
       expect(document.getElementById('averageSize').textContent).toBe('4.0 (≈3)');
