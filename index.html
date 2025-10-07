@@ -27,6 +27,13 @@
                     <input type="text" id="participantNames" name="participantNames" placeholder="Alice, Bob, Charlie"
                            required>
                 </label>
+                <label for="estimationType">
+                    Estimation Scale
+                    <select id="estimationType" name="estimationType">
+                        <option value="tshirt" selected>T-shirt Sizes</option>
+                        <option value="fibonacci">Planning Poker (Fibonacci)</option>
+                    </select>
+                </label>
                 <button type="submit">Create Session</button>
             </form>
         </article>
@@ -63,21 +70,18 @@
             <header>
                 <h3>👋 Welcome, <span id="welcomeParticipantName"></span>!</h3>
             </header>
-            <p>Ready to estimate? Select your T-shirt size below.</p>
+            <p id="welcomeMessage">Ready to estimate? Make your selection below.</p>
         </article>
 
         <article id="yourEstimationSection">
             <header>
                 <h3>Your Estimation</h3>
             </header>
-            <div class="estimation-buttons">
-                <p>Select your T-shirt size estimate:</p>
-                <button class="estimate-btn" data-size="XS">XS</button>
-                <button class="estimate-btn" data-size="S">S</button>
-                <button class="estimate-btn" data-size="M">M</button>
-                <button class="estimate-btn" data-size="L">L</button>
-                <button class="estimate-btn" data-size="XL">XL</button>
-                <button class="estimate-btn" data-size="XXL">XXL</button>
+            <div class="estimation-panel">
+                <p id="estimationPrompt" class="estimation-prompt">Select your T-shirt size estimate:</p>
+                <div id="estimationButtons" class="estimation-buttons">
+                    <!-- Estimation buttons will be injected here -->
+                </div>
             </div>
             <footer id="yourEstimateDisplay" class="hidden">
                 <p>You estimated: <strong id="yourEstimate"></strong></p>
@@ -108,7 +112,7 @@
 
             <!-- Average Size Visualization -->
             <div id="averageSizeSection" class="average-size-section">
-                <h4>Average Estimate: <span id="averageSize"></span></h4>
+                <h4 id="averageEstimateHeading"><span id="averageEstimateLabel">Average Estimate</span>: <span id="averageSize"></span></h4>
                 <svg id="sizesVisualization" class="sizes-svg" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
                     <!-- Size distribution bars will be dynamically added here -->
                 </svg>

@@ -33,11 +33,23 @@ h2, h3 {
     }
 }
 
+
+.estimation-panel {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+    gap: 0.5rem;
+}
+
+.estimation-prompt {
+    font-weight: 600;
+    margin: 0;
+}
+
 .estimation-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 0.5rem;
-    margin: 1rem 0;
 }
 
 .estimation-buttons button {

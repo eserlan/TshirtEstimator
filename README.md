@@ -6,6 +6,7 @@ A real-time web application for collaborative T-shirt size estimation. Multiple 
 
 - 🎯 **Real-time Collaboration**: Multiple participants can estimate simultaneously
 - 👕 **T-shirt Sizing**: Use standard sizes (XS, S, M, L, XL, XXL) for estimation
+- 🔢 **Planning Poker**: Switch to Fibonacci-based planning poker cards for sprint sizing
 - 🔒 **Hidden Results**: Estimates remain hidden until all participants submit
 - 🔥 **Firebase Integration**: Real-time data synchronization with Firestore
 - 🎨 **Modern UI**: Clean, responsive design using Pico CSS
@@ -52,9 +53,10 @@ A real-time web application for collaborative T-shirt size estimation. Multiple 
 
 1. Enter a task description (e.g., "Implement user authentication")
 2. Enter participant names separated by commas (e.g., "Alice, Bob, Charlie")
-3. Click "Create Session"
-4. Select your name from the prompt
-5. Share the Session ID with other participants (e.g., "lusab-babad" - easy to pronounce and remember!)
+3. Choose an estimation scale (T-shirt sizes or Planning Poker Fibonacci deck)
+4. Click "Create Session"
+5. Select your name from the prompt
+6. Share the Session ID with other participants (e.g., "lusab-babad" - easy to pronounce and remember!)
 
 ### Joining a Session
 
@@ -65,7 +67,7 @@ A real-time web application for collaborative T-shirt size estimation. Multiple 
 
 ### Submitting an Estimate
 
-1. Once in the session, click one of the T-shirt size buttons (XS, S, M, L, XL, XXL)
+1. Once in the session, click one of the estimation buttons (T-shirt sizes or Fibonacci numbers based on the chosen scale)
 2. Your estimate is immediately saved and marked as submitted
 3. Wait for other participants to submit their estimates
 
@@ -113,6 +115,7 @@ sessions/{sessionId}
       - submitted: boolean
   - createdAt: timestamp
   - allSubmitted: boolean
+  - estimationType: 'tshirt' | 'fibonacci'
 ```
 
 ## Security Considerations

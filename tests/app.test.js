@@ -62,6 +62,7 @@ beforeEach(() => {
     <form id="createSessionForm"></form>
     <input id="taskDescription" value="Build feature X" />
     <input id="participantNames" value="Alice, Bob" />
+    <select id="estimationType"><option value="tshirt" selected>T-shirt</option></select>
     <form id="joinSessionForm"></form>
     <input id="sessionId" value="abcde-fghij" />
     <button id="backButton"></button>
@@ -73,7 +74,10 @@ beforeEach(() => {
     <div id="resultsGrid"></div>
     <div id="waitingSection" class="hidden"></div>
     <div id="yourEstimationSection">
-      <div class="estimation-buttons"></div>
+      <div class="estimation-panel">
+        <p id="estimationPrompt" class="estimation-prompt"></p>
+        <div id="estimationButtons" class="estimation-buttons"></div>
+      </div>
     </div>
     <div id="yourEstimateDisplay" class="hidden"></div>
     <div id="yourEstimate"></div>

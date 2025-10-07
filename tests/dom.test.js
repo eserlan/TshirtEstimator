@@ -19,7 +19,10 @@ describe('DOM Manipulation Tests', () => {
         <div id="resultsGrid"></div>
         <div id="waitingSection" class="hidden"></div>
         <div id="yourEstimationSection">
-          <div class="estimation-buttons"></div>
+          <div class="estimation-panel">
+            <p id="estimationPrompt" class="estimation-prompt"></p>
+            <div id="estimationButtons" class="estimation-buttons"></div>
+          </div>
         </div>
         <div id="yourEstimateDisplay" class="hidden"></div>
         <div id="yourEstimate"></div>
