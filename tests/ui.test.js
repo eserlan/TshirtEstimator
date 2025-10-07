@@ -165,8 +165,8 @@ describe('UI Module Tests', () => {
       expect(elements.averageEstimateLabel.textContent).toBe('Average Estimate (Planning Poker)');
       expect(document.getElementById('averageSize').textContent).toBe('4.0 (≈3)');
       const fibButtons = elements.yourEstimationSection.querySelectorAll('.estimate-btn');
-      expect(fibButtons.length).toBe(10);
-      expect(Array.from(fibButtons).map(btn => btn.textContent)).toEqual(['1', '2', '3', '5', '8', '13', '21', '34', '55', '89']);
+      expect(fibButtons.length).toBe(9);
+      expect(Array.from(fibButtons).map(btn => btn.textContent)).toEqual(['0', '1', '2', '3', '5', '8', '13', '20', '?']);
     });
 
     it('should update participants list', () => {

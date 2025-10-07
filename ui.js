@@ -49,16 +49,15 @@ const ESTIMATION_MODES = {
         prompt: 'Select your Fibonacci estimate:',
         welcomeMessage: 'Ready to estimate? Choose your Fibonacci number below.',
         options: [
+            { value: '0', label: '0', numeric: 0 },
             { value: '1', label: '1', numeric: 1 },
             { value: '2', label: '2', numeric: 2 },
             { value: '3', label: '3', numeric: 3 },
             { value: '5', label: '5', numeric: 5 },
             { value: '8', label: '8', numeric: 8 },
             { value: '13', label: '13', numeric: 13 },
-            { value: '21', label: '21', numeric: 21 },
-            { value: '34', label: '34', numeric: 34 },
-            { value: '55', label: '55', numeric: 55 },
-            { value: '89', label: '89', numeric: 89 }
+            { value: '20', label: '20', numeric: 20 },
+            { value: '?', label: '?', numeric: null }
         ]
     }
 };
