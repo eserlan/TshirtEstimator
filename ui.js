@@ -1,5 +1,6 @@
 // DOM element references - using getters for lazy initialization
 export const elements = {
+    get mainTitle() { return document.getElementById('mainTitle'); },
     get setupView() { return document.getElementById('setupView'); },
     get estimationView() { return document.getElementById('estimationView'); },
     get createSessionForm() { return document.getElementById('createSessionForm'); },
@@ -28,6 +29,7 @@ const ESTIMATION_MODES = {
         id: 'tshirt',
         label: 'T-shirt Sizes',
         shortLabel: 'T-shirt',
+        title: '👕 T-shirt Estimator',
         prompt: 'Select your T-shirt size estimate:',
         welcomeMessage: 'Ready to estimate? Select your T-shirt size below.',
         options: [
@@ -43,6 +45,7 @@ const ESTIMATION_MODES = {
         id: 'fibonacci',
         label: 'Planning Poker (Fibonacci)',
         shortLabel: 'Planning Poker',
+        title: '🎯 Story Point Estimator',
         prompt: 'Select your Fibonacci estimate:',
         welcomeMessage: 'Ready to estimate? Choose your Fibonacci number below.',
         options: [
@@ -70,6 +73,11 @@ export function switchToEstimationView(sessionId) {
 export function switchToSetupView() {
     elements.setupView.classList.remove('hidden');
     elements.estimationView.classList.add('hidden');
+    
+    // Reset title to default
+    if (elements.mainTitle) {
+        elements.mainTitle.textContent = '👕 T-shirt Estimator';
+    }
     
     // Reset forms (with fallback for test environments)
     if (elements.createSessionForm && typeof elements.createSessionForm.reset === 'function') {
@@ -125,6 +133,9 @@ function getEstimationConfig(sessionData) {
 }
 
 function configureEstimationExperience(config) {
+    if (elements.mainTitle) {
+        elements.mainTitle.textContent = config.title;
+    }
     if (elements.estimationPrompt) {
         elements.estimationPrompt.textContent = config.prompt;
     }
